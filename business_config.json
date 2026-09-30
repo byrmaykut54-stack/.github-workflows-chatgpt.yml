@@ -1,0 +1,13 @@
+{
+  "business_name": "Demo İşletme",
+  "sector": "Berber",
+  "services": [
+    {"name": "Saç Kesimi", "price": "500 TL"},
+    {"name": "Saç + Sakal", "price": "750 TL"},
+    {"name": "Sakal", "price": "300 TL"}
+  ],
+  "working_hours": "09:00-18:00",
+  "closed_days": ["Pazar"],
+  "address": "İşletme adresini buraya yazın",
+  "tone": "samimi, kısa ve profesyonel"
+}
