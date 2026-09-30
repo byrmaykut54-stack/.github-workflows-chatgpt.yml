@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17202a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEXORA">
+<link rel="apple-touch-icon" href="./app-icon.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>NEXORA • İşletme Yönetim Platformu</title>
+<style>
+*{box-sizing:border-box}body{font-family:Inter,Arial,sans-serif;margin:0;background:#f7f8fa;color:#111827;padding-bottom:env(safe-area-inset-bottom)}.wrap{max-width:1240px;margin:auto;padding:28px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding:20px 22px;background:rgba(255,255,255,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid #e8ebef;border-radius:20px;box-shadow:0 12px 35px rgba(15,23,42,.06)}h1,h2{margin:0 0 8px}.top h1{font-size:24px;letter-spacing:.12em;color:#111827}.muted{color:#667085}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
+.card{background:rgba(255,255,255,.9);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(15,23,42,.055);border:1px solid #e7eaee}.card h2{font-size:16px;letter-spacing:-.01em;color:#1f2937}.stat{font-size:32px;font-weight:800;letter-spacing:-.04em;color:#111827}.label{font-size:10px;letter-spacing:.12em;font-weight:800;color:#8a929d}
+.layout{display:grid;grid-template-columns:2fr 1fr;gap:20px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #edf0f2;font-size:13px;vertical-align:middle}th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#8a929d;font-weight:800}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:750}.pending{background:#fff7df;color:#8a6810}.confirmed{background:#e7f7ed;color:#18733d}.cancelled{background:#fdebea;color:#a12a25}
+button{border:0;border-radius:11px;padding:9px 12px;cursor:pointer;font-weight:700;transition:.18s}.approve{background:#e8f7ee;color:#17683a}.cancel{background:#fcedeb;color:#9d2e29;margin-left:5px}.primary{background:#111827;color:#fff;box-shadow:0 6px 15px rgba(15,23,42,.12)}.primary:hover{background:#1f2937;transform:translateY(-1px)}.full{width:100%}
+input{width:100%;padding:12px 13px;border:1px solid #e0e5ea;background:#fbfcfd;border-radius:11px;margin:5px 0 10px;font-size:15px;outline:none;transition:.2s}input:focus{background:#fff;border-color:#b7a16a;box-shadow:0 0 0 4px rgba(212,175,55,.08)}textarea{background:#fbfcfd;outline:none}.chat{height:280px;overflow:auto;background:#f7f8fa;border:1px solid #edf0f2;border-radius:13px;padding:10px}
+.msg{padding:10px 12px;margin:7px 0;border-radius:11px;white-space:pre-wrap}.user{background:#eef3f9}.bot{background:#f0f8f3}.chatform{display:flex;gap:8px;margin-top:10px}.chatform input{margin:0}.install{background:#111827;color:#fff;margin-top:0}
+.channel{font-size:10px;text-transform:uppercase;color:#8a929d}.message{max-width:560px}.unread{font-weight:800}.pill{display:inline-block;margin-left:5px;padding:3px 7px;border-radius:10px;background:#eef2f6;font-size:10px;color:#667085}
+@media(max-width:800px){.wrap{padding:14px}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.card{padding:14px;border-radius:14px}.layout{grid-template-columns:1fr}.top{display:block}.top h1{font-size:25px}.stat{font-size:26px}table{min-width:650px}.scroll{overflow-x:auto}.install{width:100%;padding:11px}.chatform{position:sticky;bottom:0;background:#fff;padding-top:8px}.chat{height:320px}}
+
+.auth-shell{position:fixed;inset:0;background:#f7f8fa;z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:24px 18px calc(28px + env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;font-family:Inter,Arial,sans-serif}.auth-shell:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,#fff 0%,#f7f8fa 45%,#eef1f4 100%)}.auth-glow{position:absolute;width:360px;height:360px;border-radius:50%;filter:blur(70px);opacity:.25}.auth-glow-one{background:#d4af37;top:-220px;right:-120px}.auth-glow-two{background:#94a3b8;bottom:-250px;left:-130px}.auth-card{position:relative;width:100%;max-width:520px;background:rgba(255,255,255,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.9);border-radius:28px;padding:38px;box-shadow:0 30px 80px rgba(15,23,42,.12),0 2px 8px rgba(15,23,42,.04)}.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:38px}.auth-mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#111827,#334155);color:#fff;display:grid;place-items:center;font-size:21px;font-weight:800;box-shadow:0 8px 20px rgba(15,23,42,.18);border:1px solid rgba(212,175,55,.55)}.auth-name{font-size:18px;font-weight:850;letter-spacing:.14em;color:#111827}.auth-tag{font-size:9px;font-weight:700;letter-spacing:.22em;color:#a07d1f;margin-top:2px}.auth-copy{margin-bottom:25px}.auth-eyebrow{font-size:10px;letter-spacing:.18em;font-weight:800;color:#a07d1f;margin-bottom:11px}.auth-copy h1{font-size:36px;line-height:1.08;letter-spacing:-.045em;color:#0f172a;margin:0 0 13px}.auth-subtitle{font-size:14px;line-height:1.6;color:#667085;max-width:390px}.auth-card input{background:#fafbfc;border:1px solid #e3e7ec;border-radius:12px;padding:13px 14px;margin:5px 0 9px;font-size:15px;outline:none;transition:.2s}.auth-card input:focus{background:#fff;border-color:#b7a16a;box-shadow:0 0 0 4px rgba(212,175,55,.10)}.auth-card .primary{height:48px;border-radius:12px;background:#111827;box-shadow:0 8px 18px rgba(15,23,42,.15);font-size:14px;letter-spacing:.01em}.auth-card .primary:hover{background:#1f2937}.auth-divider{display:flex;align-items:center;gap:12px;color:#98a2b3;font-size:11px;margin:18px 0 10px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#e9edf1;flex:1}.auth-secondary{height:46px;border-radius:12px;background:#fff!important;color:#344054;border:1px solid #e2e6eb;font-size:14px}.auth-secondary:hover{background:#f8fafc!important}.auth-foot{text-align:center;color:#98a2b3;font-size:10px;margin-top:18px}.auth-card #authError{min-height:18px}.nexora-corp{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;color:#7b8491;font-size:8px;font-weight:800;letter-spacing:.13em}.nexora-corp-line{height:1px;width:28px;background:linear-gradient(90deg,transparent,#d5dae0)}.nexora-corp-line:last-child{background:linear-gradient(90deg,#d5dae0,transparent)}.nexora-corp-dot{color:#b08d2e;font-size:9px}.nexora-copyright{text-align:center;color:#b0b7c0;font-size:9px;margin-top:7px;letter-spacing:.02em}
+ .saas-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}.saas-points{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.saas-point{padding:12px;border:1px solid #e7eaee;border-radius:13px;background:#fff;font-size:11px;color:#475467}.saas-point b{display:block;color:#111827;font-size:12px;margin-bottom:4px}.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.plan{border:1px solid #e3e7ec;border-radius:16px;padding:16px;background:#fff}.plan.pro{border-color:#d4af37;box-shadow:0 10px 25px rgba(212,175,55,.10)}.plan-name{font-size:12px;font-weight:850;letter-spacing:.12em;color:#111827}.plan-price{font-size:24px;font-weight:850;margin:7px 0}.plan ul{padding-left:17px;margin:8px 0 0;color:#667085;font-size:11px;line-height:1.65}.auth-form-panel{padding:20px;border:1px solid #e7eaee;border-radius:18px;background:rgba(250,251,252,.82)}.auth-form-panel .auth-copy{margin-bottom:14px}.auth-form-panel .auth-copy h1{font-size:25px}.trial-note{font-size:11px;color:#7a5f16;background:#fff8e6;border:1px solid #f0dfae;border-radius:10px;padding:9px 11px;margin:10px 0 13px}.auth-toggle{font-size:12px;color:#667085;text-align:center;margin-top:12px}.auth-toggle button{background:transparent;color:#7a5f16;padding:3px}.auth-benefit{font-size:11px;color:#667085;margin-top:10px;line-height:1.5}@media(max-width:700px){.saas-hero{grid-template-columns:1fr}.saas-points{grid-template-columns:1fr}.plans{grid-template-columns:1fr}}@media(max-width:600px){.auth-shell{padding:16px}.auth-card{padding:24px 20px;border-radius:24px;max-width:520px}.auth-brand{margin-bottom:30px}.auth-copy h1{font-size:29px}.auth-subtitle{font-size:13px}}
+ .dash-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(145deg,#111827,#334155);color:#fff;display:grid;place-items:center;font-weight:800;border:1px solid rgba(212,175,55,.55);box-shadow:0 7px 16px rgba(15,23,42,.13)}.nexora-login{width:100%;max-width:470px;margin:8px auto 0}.nexora-login .auth-copy{text-align:center;margin-bottom:24px}.nexora-login .auth-copy h1{font-size:34px}.nexora-login .auth-subtitle{max-width:420px;margin:0 auto}.auth-label{display:block;font-size:11px;font-weight:800;letter-spacing:.04em;color:#475467;margin:4px 0 2px}.auth-row{display:flex;justify-content:space-between;align-items:center;min-height:28px}.auth-link{background:transparent!important;color:#8a6a16;padding:3px 0;font-size:11px}.auth-link:hover{background:transparent!important}.auth-safe{text-align:center;color:#98a2b3;font-size:10px;line-height:1.5;margin-top:15px}.nexora-login .auth-form-panel{padding:22px;background:rgba(255,255,255,.72);box-shadow:0 14px 40px rgba(15,23,42,.05)}@media(max-width:600px){.auth-shell{padding:16px 14px calc(22px + env(safe-area-inset-bottom));align-items:flex-start}.auth-card{margin:0 auto;padding:24px 20px;border-radius:24px}.auth-brand{margin-bottom:24px}.nexora-login{margin-top:2px}.nexora-login .auth-copy h1{font-size:28px}.nexora-login .auth-subtitle{font-size:13px}.nexora-login .auth-form-panel{padding:18px}.nexora-corp{margin-top:20px}}\n .master-panel{margin:0 0 20px;border:1px solid #dfe4e8;border-radius:20px;background:#fff;padding:20px;box-shadow:0 12px 35px rgba(15,23,42,.06)}.master-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.master-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.master-stat{padding:14px;border:1px solid #edf0f2;border-radius:14px;background:#fafbfc}.master-stat .num{font-size:26px;font-weight:850}.master-table{margin-top:14px;overflow:auto}.master-table table{min-width:680px}@media(max-width:700px){.master-grid{grid-template-columns:repeat(2,1fr)}.master-head{display:block}.master-head button{margin-top:10px;width:100%}}\n
+/* NEXORA v2 — menu based workspace */
+.nx-nav{display:flex;gap:7px;align-items:center;overflow-x:auto;padding:7px;margin:0 0 18px;background:rgba(255,255,255,.86);border:1px solid #e7eaee;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.045);position:sticky;top:10px;z-index:50;scrollbar-width:none}.nx-nav::-webkit-scrollbar{display:none}.nx-nav button{flex:0 0 auto;background:transparent;color:#667085;border:1px solid transparent;padding:10px 13px;border-radius:11px;font-size:12px;font-weight:800;white-space:nowrap}.nx-nav button:hover{background:#f5f7f9;color:#111827}.nx-nav button.active{background:#111827;color:#fff;box-shadow:0 5px 14px rgba(15,23,42,.13)}.nx-page-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px;padding:4px 2px}.nx-page-head h2{font-size:20px;margin:0}.nx-page-head span{font-size:11px;color:#8a929d}.nx-hidden{display:none!important}.nx-single{grid-template-columns:1fr!important}.nx-mobile-menu{display:none}@media(max-width:800px){.nx-nav{position:sticky;top:6px}.nx-nav button{padding:9px 11px;font-size:11px}.nx-page-head{margin-top:4px}.nx-page-head h2{font-size:18px}}
+
+/* NEXORA mobile touch hardening */
+@media(max-width:800px){
+  button,.primary,.auth-link{min-height:44px;touch-action:manipulation}
+  input,select,textarea{min-height:44px;font-size:16px}
+  .nx-nav{scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .nx-nav::-webkit-scrollbar{display:none}
+  .nx-nav button{flex:0 0 auto;white-space:nowrap}
+  .chatform,.nx-ai-compose{align-items:stretch}
+}
+/* NEXORA ELITE — premium visual system */
+:root{
+  --nx-ink:#0b1220;--nx-ink-2:#172033;--nx-muted:#667085;--nx-line:rgba(15,23,42,.09);
+  --nx-gold:#b8954a;--nx-gold-soft:#f5edda;--nx-bg:#f4f6f9;--nx-surface:rgba(255,255,255,.88);
+}
+html{background:var(--nx-bg)}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif;background:
+radial-gradient(900px 420px at 8% -8%,rgba(184,149,74,.09),transparent 60%),
+radial-gradient(760px 360px at 100% 0%,rgba(30,41,59,.08),transparent 58%),var(--nx-bg);color:var(--nx-ink);letter-spacing:-.01em}
+.wrap{max-width:1380px;padding:24px 28px}
+.top{position:relative;padding:18px 20px;border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(248,250,252,.82));border:1px solid rgba(255,255,255,.92);box-shadow:0 18px 55px rgba(15,23,42,.075);overflow:hidden}
+.top:after{content:"";position:absolute;right:-90px;top:-110px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(184,149,74,.16),transparent 68%);pointer-events:none}
+.top h1{font-weight:900;letter-spacing:.16em;color:#0b1220}
+.muted{color:#7b8491}
+.grid{gap:16px}
+.card{position:relative;background:var(--nx-surface);border:1px solid rgba(15,23,42,.075);border-radius:20px;box-shadow:0 14px 38px rgba(15,23,42,.055);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 20px 46px rgba(15,23,42,.08);border-color:rgba(184,149,74,.22)}
+.card h2{font-weight:850}
+.stat{font-size:34px;font-weight:900}
+.label{letter-spacing:.15em;color:#9a7b35}
+button{font-family:inherit;border-radius:12px}
+.primary{background:linear-gradient(135deg,#0b1220,#202b3d);box-shadow:0 8px 20px rgba(11,18,32,.16)}
+.primary:hover{background:linear-gradient(135deg,#172033,#2b394e);transform:translateY(-1px)}
+input,select,textarea{font-family:inherit;border-color:#dde2e8;background:rgba(250,251,252,.9)}
+input:focus,select:focus,textarea:focus{border-color:rgba(184,149,74,.7);box-shadow:0 0 0 4px rgba(184,149,74,.10)}
+.nx-nav{gap:5px;padding:6px;background:rgba(11,18,32,.96);border:1px solid rgba(255,255,255,.08);border-radius:17px;box-shadow:0 14px 32px rgba(11,18,32,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.nx-nav button{color:#aeb7c5;border-radius:12px;font-weight:750}
+.nx-nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+.nx-nav button.active{background:linear-gradient(135deg,#fff,#eef1f4);color:#0b1220;box-shadow:0 5px 16px rgba(0,0,0,.18)}
+.nx-page-head{padding:10px 2px 16px;border-bottom:1px solid rgba(15,23,42,.07);margin-bottom:16px}
+.nx-page-head h2{font-size:22px;font-weight:900;letter-spacing:-.035em}
+.nx-page-head span{color:#8a929d}
+.nx-single>.card,.nx-single>.nx-settings-main,.nx-single>.nx-ai{box-shadow:0 16px 44px rgba(15,23,42,.055)}
+.nx-settings-nav,.nx-team-create,.nx-team-manage,.nx-profile,.nx-detail{background:rgba(248,250,252,.76);border-color:rgba(15,23,42,.075)}
+.nx-set-section{border-radius:17px;box-shadow:0 8px 24px rgba(15,23,42,.035)}
+.nx-customer,.nx-team-user,.plan,.nx-ms{border-color:rgba(15,23,42,.075);box-shadow:0 6px 18px rgba(15,23,42,.025)}
+.nx-customer:hover{border-color:rgba(184,149,74,.38);box-shadow:0 10px 26px rgba(15,23,42,.06)}
+.nx-avatar{background:linear-gradient(145deg,#f8f0df,#efe5ce);color:#765b22}
+.badge{letter-spacing:.01em}
+.nx-chat-list{background:#f8fafc}
+.nx-chat-item.active,.nx-chat-item:hover{background:#f4eddf}
+.nx-msg.ai{background:linear-gradient(135deg,#edf7f0,#e7f2ec)}
+.nx-ai,.nx-master,.master-panel{border-color:rgba(15,23,42,.075);box-shadow:0 16px 44px rgba(15,23,42,.055)}
+.nx-master,.master-panel{background:rgba(255,255,255,.9)}
+.nx-health{font-weight:750}
+.auth-shell{background:#f4f6f9}
+.auth-shell:before{background:radial-gradient(circle at 50% -5%,#fff 0%,#f5f6f8 46%,#e9edf2 100%)}
+.auth-card{border-radius:30px;box-shadow:0 36px 100px rgba(15,23,42,.14),0 3px 10px rgba(15,23,42,.04)}
+.auth-mark,.dash-mark{background:linear-gradient(145deg,#0b1220,#273449);border-color:rgba(184,149,74,.62)}
+.auth-tag,.auth-eyebrow,.auth-link{color:#9a7b35}
+.nexora-corp-dot{color:#b8954a}
+.install{background:linear-gradient(135deg,#0b1220,#202b3d)}
+@media(max-width:800px){
+ .wrap{padding:14px}
+ .top{border-radius:20px}
+ .nx-nav{border-radius:15px}
+ .nx-page-head h2{font-size:19px}
+ .card{box-shadow:0 10px 28px rgba(15,23,42,.05)}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* NEXORA dashboard — executive workspace */
+.nx-dashboard-hero{position:relative;display:grid;grid-template-columns:1.55fr .65fr;gap:18px;min-height:220px;margin:0 0 18px;padding:28px 30px;border-radius:24px;overflow:hidden;background:
+radial-gradient(circle at 85% 20%,rgba(184,149,74,.18),transparent 28%),
+linear-gradient(135deg,#0a111f 0%,#172235 58%,#202d40 100%);color:#fff;box-shadow:0 24px 55px rgba(10,17,31,.18)}
+.nx-dashboard-hero:before{content:"";position:absolute;inset:auto -70px -140px auto;width:320px;height:320px;border:1px solid rgba(255,255,255,.09);border-radius:50%;box-shadow:0 0 0 35px rgba(255,255,255,.018),0 0 0 70px rgba(255,255,255,.014)}
+.nx-hero-copy,.nx-hero-side{position:relative;z-index:1}
+.nx-hero-kicker{font-size:9px;font-weight:850;letter-spacing:.2em;color:#d7bd7d;margin-bottom:12px}
+.nx-hero-copy h3{font-size:32px;line-height:1.05;letter-spacing:-.045em;margin:0 0 12px;font-weight:850}
+.nx-hero-copy h3 span{color:#d7bd7d}
+.nx-hero-copy p{max-width:610px;color:#b7c0ce;font-size:13px;line-height:1.65;margin:0}
+.nx-hero-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.nx-hero-actions .primary{background:#fff;color:#0b1220;box-shadow:none}
+.nx-hero-actions .primary:hover{background:#f4f5f6}
+.nx-hero-secondary{background:rgba(255,255,255,.07);color:#fff;border:1px solid rgba(255,255,255,.14)}
+.nx-hero-secondary:hover{background:rgba(255,255,255,.12)}
+.nx-hero-side{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right}
+.nx-live{display:inline-flex;align-items:center;gap:7px;font-size:10px;color:#d7dfeb;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:7px 10px;border-radius:999px}
+.nx-live span{width:7px;height:7px;border-radius:50%;background:#55c58a;box-shadow:0 0 0 4px rgba(85,197,138,.12)}
+.nx-hero-date{font-size:21px;font-weight:800;letter-spacing:-.03em;margin-top:18px}
+.nx-hero-note{font-size:10px;color:#8f9bac;margin-top:5px}
+.nx-dashboard-hero + .grid{grid-template-columns:repeat(5,1fr)}
+.nx-dashboard-hero + .grid .card{min-height:116px;padding:18px}
+.nx-dashboard-hero + .grid .card:nth-child(6){grid-column:span 2}
+.nx-dashboard-hero + .grid .card:nth-child(7){grid-column:span 3}
+@media(max-width:900px){
+ .nx-dashboard-hero{grid-template-columns:1fr;padding:24px}
+ .nx-hero-side{align-items:flex-start;text-align:left;margin-top:4px}
+ .nx-dashboard-hero + .grid{grid-template-columns:repeat(2,1fr)}
+ .nx-dashboard-hero + .grid .card:nth-child(6),.nx-dashboard-hero + .grid .card:nth-child(7){grid-column:span 1}
+}
+@media(max-width:600px){
+ .nx-dashboard-hero{min-height:auto;padding:22px 20px;border-radius:20px}
+ .nx-hero-copy h3{font-size:27px}
+ .nx-hero-copy p{font-size:12px}
+ .nx-dashboard-hero + .grid{grid-template-columns:1fr 1fr}
+ .nx-dashboard-hero + .grid .card{min-height:105px;padding:14px}
+ .nx-dashboard-hero + .grid .card:nth-child(6),.nx-dashboard-hero + .grid .card:nth-child(7){grid-column:1/-1}
+ .nx-hero-actions button{flex:1}
+}
+
+/* NEXORA appointments — premium operations center */
+.nx-appt-shell{display:block}
+.nx-appt-topline{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px;padding:25px 28px;border-radius:22px;background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid rgba(15,23,42,.07);box-shadow:0 14px 38px rgba(15,23,42,.05)}
+.nx-appt-topline h3{font-size:27px;letter-spacing:-.04em;margin:0 0 6px}.nx-appt-topline p{margin:0;color:#7b8491;font-size:12px}.nx-appt-add{min-width:150px}
+.nx-appt-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.nx-appt-stats>div{padding:15px 17px;border:1px solid rgba(15,23,42,.07);border-radius:17px;background:rgba(255,255,255,.78);box-shadow:0 8px 22px rgba(15,23,42,.035)}
+.nx-appt-stats span{display:block;font-size:9px;font-weight:850;letter-spacing:.14em;color:#9a7b35}.nx-appt-stats b{display:block;font-size:25px;letter-spacing:-.04em;margin-top:5px}.nx-appt-stats small{font-size:10px;color:#8a929d}
+.nx-appt-main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(290px,.7fr);gap:16px;align-items:start}
+.nx-appointment-workspace{min-width:0}
+.nx-appt-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.nx-appt-date-label{font-size:11px;font-weight:800;color:#667085}
+.nx-appt-create{position:sticky;top:78px}.nx-create-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:16px}.nx-create-head span{font-size:9px;letter-spacing:.16em;font-weight:850;color:#9a7b35}.nx-create-head h3{font-size:20px;margin:4px 0}.nx-create-head p{font-size:11px;color:#8a929d;margin:0;line-height:1.45}.nx-create-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#f5edda;color:#765b22;font-size:20px;font-weight:700}
+.nx-appt-create label{display:block;font-size:9px;font-weight:850;letter-spacing:.09em;color:#667085;margin:10px 0}.nx-appt-create label input{margin:5px 0 0}.nx-create-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nx-appt-views{display:flex;gap:5px}.nx-appt-views button{background:#f4f6f8;color:#667085}.nx-appt-views button.active{background:#0b1220;color:#fff}
+@media(max-width:900px){.nx-appt-main{grid-template-columns:1fr}.nx-appt-create{position:static}.nx-appt-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.nx-appt-topline{display:block;padding:20px;border-radius:20px}.nx-appt-add{width:100%;margin-top:16px}.nx-appt-topline h3{font-size:24px}.nx-appt-toolbar{display:block}.nx-appt-views{margin-top:9px}.nx-appt-stats{gap:8px}.nx-appt-stats>div{padding:12px}.nx-appt-stats b{font-size:22px}}
+
+/* NEXORA CRM — premium customer workspace */
+.nx-crm-head{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:26px 28px;margin-bottom:14px;border-radius:22px;background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid rgba(15,23,42,.07);box-shadow:0 14px 38px rgba(15,23,42,.05)}
+.nx-crm-head h3{font-size:27px;letter-spacing:-.04em;margin:0 0 6px}.nx-crm-head p{margin:0;color:#7b8491;font-size:12px}.nx-crm-badge{padding:8px 11px;border-radius:999px;background:#f5edda;color:#765b22;font-size:9px;font-weight:850;letter-spacing:.14em;white-space:nowrap}
+.nx-crm-toolbar{display:flex;gap:10px;margin-bottom:14px}.nx-crm-search{display:flex;align-items:center;gap:8px;flex:1;padding:0 13px;background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:13px;box-shadow:0 7px 20px rgba(15,23,42,.035)}.nx-crm-search span{color:#9a7b35;font-size:19px}.nx-crm-search input{border:0;background:transparent;margin:0;box-shadow:none}.nx-crm-search input:focus{box-shadow:none}
+.nx-crm-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.nx-crm-list:empty{display:block}
+.nx-crm-list .nx-customer{background:rgba(255,255,255,.9);border:1px solid rgba(15,23,42,.075);border-radius:18px;padding:17px;transition:.18s}.nx-crm-list .nx-customer:hover{transform:translateY(-2px)}
+@media(max-width:700px){.nx-crm-head{display:block;padding:21px 20px;border-radius:20px}.nx-crm-head h3{font-size:24px}.nx-crm-badge{display:inline-block;margin-top:14px}.nx-crm-toolbar{align-items:stretch}.nx-crm-toolbar .primary{min-width:82px}.nx-crm-list{grid-template-columns:1fr}}
+
+/* NEXORA AI — premium communication center */
+.nx-ai-shell{display:block}.nx-ai-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:25px 28px;margin-bottom:14px;border-radius:22px;background:linear-gradient(135deg,#0a111f,#1d2a3e);color:#fff;box-shadow:0 20px 48px rgba(10,17,31,.14)}.nx-ai-head h3{font-size:26px;letter-spacing:-.04em;margin:0 0 6px}.nx-ai-head p{font-size:12px;color:#b7c0ce;margin:0}.nx-ai-status{display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);font-size:9px;font-weight:850;letter-spacing:.13em;white-space:nowrap}.nx-ai-status span{width:7px;height:7px;border-radius:50%;background:#55c58a;box-shadow:0 0 0 4px rgba(85,197,138,.12)}
+.nx-ai-workspace{padding:10px;overflow:hidden}.nx-ai{min-height:600px}.nx-chat-list{border-right:1px solid #edf0f2!important;padding:10px!important}.nx-chat-item{border-radius:14px!important;padding:13px!important}.nx-chat-item.active{border:1px solid rgba(184,149,74,.2)}.nx-ai-channel{font-size:8px;letter-spacing:.12em;color:#9a7b35;margin-top:9px;font-weight:850}.nx-chat-head{display:flex!important;align-items:center;gap:10px!important;padding:15px 17px!important;border-bottom:1px solid #edf0f2}.nx-chat-head>span{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#f5edda;color:#765b22}.nx-chat-head small{display:block;color:#8a929d;font-size:10px;font-weight:500;margin-top:2px}.nx-chat-body{background:linear-gradient(180deg,#fbfcfd,#f6f8fa)!important;padding:18px!important}.nx-msg{box-shadow:0 5px 15px rgba(15,23,42,.035)}.nx-ai-tools{display:flex!important;align-items:center;gap:6px!important;padding:10px 12px!important;border-top:1px solid #edf0f2;background:#fff;overflow-x:auto}.nx-ai-tools>span{font-size:9px;font-weight:850;letter-spacing:.08em;color:#9a7b35;white-space:nowrap;margin-right:3px}.nx-ai-tools button{white-space:nowrap;background:#f5f7f9;color:#475467;border:1px solid #e6e9ed}.nx-ai-tools button:hover{background:#f4eddf;border-color:#e6d4a8}.nx-ai-compose{padding:11px!important;background:#fff!important;border-top:1px solid #edf0f2}.nx-ai-compose input{background:#f8fafc!important;border:1px solid #e2e6eb!important}.nx-ai-compose .primary{min-width:88px}
+@media(max-width:700px){.nx-ai-head{display:block;padding:21px 20px;border-radius:20px}.nx-ai-head h3{font-size:23px}.nx-ai-status{display:inline-flex;margin-top:14px}.nx-ai-workspace{padding:5px}.nx-ai{min-height:520px}.nx-chat-list{display:none}.nx-chat-main{width:100%}.nx-ai-tools>span{display:none}}
+
+/* NEXORA team — enterprise access management */
+.nx-team-shell{display:block}.nx-team-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;padding:25px 28px;margin-bottom:14px;border-radius:22px;background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid rgba(15,23,42,.07);box-shadow:0 14px 38px rgba(15,23,42,.05)}.nx-team-hero h3{font-size:27px;letter-spacing:-.04em;margin:0 0 6px}.nx-team-hero p{margin:0;color:#7b8491;font-size:12px}.nx-team-security{font-size:9px;font-weight:850;letter-spacing:.13em;color:#765b22;background:#f5edda;border-radius:999px;padding:8px 11px;white-space:nowrap}
+.nx-team-layout{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.55fr);gap:16px;align-items:start}.nx-team-create{position:sticky;top:78px}.nx-team-create .nx-team-head,.nx-team-manage .nx-team-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.nx-team-head span{display:block;font-size:9px;letter-spacing:.14em;color:#9a7b35;font-weight:850;margin-bottom:3px}.nx-team-head b{font-size:16px}.nx-team-create label{display:block;font-size:9px;font-weight:850;letter-spacing:.09em;color:#667085;margin:10px 0}.nx-team-create label input{margin:5px 0 0}.nx-team-note{font-size:10px;color:#8a929d;line-height:1.5;margin-top:12px;padding-top:11px;border-top:1px solid #edf0f2}.nx-role{padding:5px 8px;border-radius:999px;background:#eef1f4;color:#667085;font-size:9px!important;letter-spacing:.08em!important;margin:0!important}.nx-team-manage{min-width:0}.nx-team-manage>#teamList{min-height:100px}.nx-team-manage button{background:#f4f6f8;color:#475467}
+@media(max-width:850px){.nx-team-layout{grid-template-columns:1fr}.nx-team-create{position:static}}
+@media(max-width:600px){.nx-team-hero{display:block;padding:21px 20px;border-radius:20px}.nx-team-hero h3{font-size:23px}.nx-team-security{display:inline-block;margin-top:14px}.nx-team-create,.nx-team-manage{padding:16px}}
+
+/* NEXORA settings — premium control center */
+.nx-settings-shell{display:block}.nx-settings-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;padding:26px 28px;margin-bottom:16px;border-radius:23px;background:linear-gradient(135deg,#0a111f,#182337 64%,#222f42);color:#fff;box-shadow:0 22px 52px rgba(10,17,31,.16);position:relative;overflow:hidden}.nx-settings-hero:after{content:"";position:absolute;width:260px;height:260px;right:-80px;top:-120px;border-radius:50%;border:1px solid rgba(255,255,255,.08);box-shadow:0 0 0 32px rgba(255,255,255,.02),0 0 0 64px rgba(255,255,255,.015)}.nx-settings-hero>div{position:relative;z-index:1}.nx-settings-hero h3{font-size:28px;letter-spacing:-.045em;margin:0 0 7px}.nx-settings-hero p{margin:0;color:#aeb8c7;font-size:12px;line-height:1.6}.nx-settings-badge{font-size:9px;font-weight:850;letter-spacing:.14em;color:#d7bd7d;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 11px;white-space:nowrap}.nx-settings-premium{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}.nx-settings-premium .nx-settings-nav{position:sticky;top:78px;display:flex;flex-direction:column;gap:5px;padding:12px;border-radius:18px;background:rgba(11,18,32,.97);border:1px solid rgba(255,255,255,.07);box-shadow:0 15px 35px rgba(11,18,32,.12)}.nx-settings-nav-title{font-size:9px;font-weight:850;letter-spacing:.18em;color:#778396;padding:5px 9px 8px}.nx-settings-premium .nx-settings-nav button{display:grid;grid-template-columns:25px 1fr;align-items:center;text-align:left;gap:5px;width:100%;background:transparent;color:#aeb7c5;border:0;padding:11px 10px;border-radius:11px;font-size:11px}.nx-settings-premium .nx-settings-nav button span{font-size:9px;color:#647184;font-weight:800}.nx-settings-premium .nx-settings-nav button:hover{background:rgba(255,255,255,.06);color:#fff}.nx-settings-premium .nx-settings-nav button.active{background:linear-gradient(135deg,#fff,#edf0f3);color:#0b1220;box-shadow:0 5px 15px rgba(0,0,0,.16)}.nx-settings-premium .nx-settings-nav button.active span{color:#9a7b35}.nx-settings-nav-divider{height:1px;background:rgba(255,255,255,.08);margin:6px 4px}.nx-settings-premium .nx-settings-main{min-width:0}.nx-settings-premium .nx-set-section{padding:24px;background:rgba(255,255,255,.92);border:1px solid rgba(15,23,42,.075);border-radius:20px;box-shadow:0 14px 36px rgba(15,23,42,.05)}.nx-set-kicker{font-size:9px;font-weight:850;letter-spacing:.18em;color:#a07d1f;margin-bottom:7px}.nx-settings-premium .nx-set-section h3{font-size:21px;margin:0 0 5px;letter-spacing:-.035em}.nx-set-desc{font-size:11px;color:#89919d;line-height:1.55;margin:0 0 18px}.nx-settings-premium .nx-set-grid{gap:13px}.nx-settings-premium .nx-set-label{font-size:9px;font-weight:850;letter-spacing:.11em;color:#667085}.nx-settings-premium textarea{width:100%;min-height:100px;padding:13px;border:1px solid #dde2e8;border-radius:12px;font:inherit;resize:vertical}.nx-settings-premium input{margin:5px 0 10px}.nx-settings-note{border-radius:12px!important;background:#f7f8fa!important;border:1px solid #edf0f2!important;padding:11px 12px!important;font-size:10px!important;color:#737d8a!important;line-height:1.5}.nx-settings-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.nx-settings-actions button{margin:0}.nx-connection-state{margin-top:5px}.nx-settings-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:2px}.nx-settings-footer .primary{min-width:170px}.nx-danger-zone{margin-top:8px;padding:17px;border:1px solid #efc7c3;border-radius:16px;background:linear-gradient(135deg,#fffafa,#fff7f6)}.nx-danger-zone b{display:block;color:#9d2e29;font-size:13px}.nx-danger-zone p{margin:5px 0 13px;color:#8b6764;font-size:10px;line-height:1.5}.nx-danger-zone input{background:#fff}.nx-danger-zone .cancel{margin:0}.nx-danger-zone button{width:auto}.nx-settings-premium .install{background:linear-gradient(135deg,#0b1220,#202b3d)}
+@media(max-width:850px){.nx-settings-premium{grid-template-columns:1fr}.nx-settings-premium .nx-settings-nav{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.nx-settings-nav-title,.nx-settings-nav-divider{grid-column:1/-1}.nx-settings-premium .nx-settings-nav button{min-height:44px}.nx-settings-hero{display:block;padding:23px}.nx-settings-badge{display:inline-block;margin-top:14px}}
+@media(max-width:600px){.nx-settings-hero{border-radius:20px;padding:21px 20px}.nx-settings-hero h3{font-size:24px}.nx-settings-premium .nx-settings-nav{grid-template-columns:1fr 1fr;padding:9px}.nx-settings-premium .nx-set-section{padding:19px;border-radius:18px}.nx-settings-footer{display:block}.nx-settings-footer .primary{width:100%}.nx-settings-footer #cfgStatus{margin-top:9px}.nx-settings-actions{display:grid;grid-template-columns:1fr}.nx-settings-actions button{width:100%}.nx-danger-zone button{width:100%}}
+
+/* NEXORA billing, usage & audit premium */
+.nx-billing-hero,.nx-usage-hero,.nx-audit-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;padding:27px 29px;margin-bottom:16px;border-radius:23px;background:linear-gradient(135deg,#0a111f,#1a2638);color:#fff;box-shadow:0 22px 52px rgba(10,17,31,.15)}.nx-billing-hero h3,.nx-usage-hero h3,.nx-audit-hero h3{font-size:28px;letter-spacing:-.045em;margin:0 0 7px}.nx-billing-hero h3 span{color:#d7bd7d}.nx-billing-hero p,.nx-usage-hero p,.nx-audit-hero p{margin:0;color:#adb7c6;font-size:12px}.nx-billing-badge,.nx-usage-badge,.nx-audit-badge{font-size:9px;font-weight:850;letter-spacing:.14em;color:#d7bd7d;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 11px;white-space:nowrap}.nx-plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.nx-plan-card{padding:23px}.nx-plan-top{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.14em;font-weight:850;color:#8b95a3}.nx-plan-top b{color:#9a7b35;background:#f5edda;border-radius:999px;padding:6px 9px}.nx-plan-card h4{font-size:23px;margin:18px 0 5px}.nx-plan-card p{font-size:11px;color:#89919d;min-height:34px}.nx-plan-card ul{list-style:none;padding:0;margin:18px 0 0;border-top:1px solid #edf0f2}.nx-plan-card li{padding:10px 0;border-bottom:1px solid #edf0f2;font-size:11px;color:#4d5968}.nx-plan-card li:before{content:"✓";color:#a07d1f;font-weight:800;margin-right:8px}.nx-plan-pro{border-color:rgba(184,149,74,.25);box-shadow:0 18px 42px rgba(15,23,42,.08)}.nx-billing-status{margin-top:16px;padding:19px 21px;display:flex;justify-content:space-between;align-items:center}.nx-billing-kicker,.nx-usage-head span,.nx-audit-head span{display:block;font-size:9px;font-weight:850;letter-spacing:.16em;color:#9a7b35}.nx-billing-status strong{display:block;font-size:21px;margin:4px 0}.nx-billing-status .primary{min-width:150px}.nx-usage-card,.nx-audit-card{padding:22px}.nx-usage-head,.nx-audit-head{display:flex;justify-content:space-between;align-items:center}.nx-usage-head h4,.nx-audit-head h4{font-size:20px;margin:4px 0}.nx-usage-dot{font-size:9px;color:#18733d;background:#edf8f1;border-radius:999px;padding:7px 9px;font-weight:850}.nx-usage-info{margin-top:18px;font-size:12px;line-height:2}.nx-audit-shield{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#f5edda}.nx-audit-list{margin-top:15px}.nx-audit-list>div{padding:12px 2px!important;border-bottom:1px solid #edf0f2!important;font-size:11px}.nx-audit-list b{font-size:12px}.nx-audit-list .muted{font-size:10px}
+@media(max-width:700px){.nx-billing-hero,.nx-usage-hero,.nx-audit-hero{display:block;padding:23px;border-radius:20px}.nx-billing-badge,.nx-usage-badge,.nx-audit-badge{display:inline-block;margin-top:14px}.nx-plan-grid{grid-template-columns:1fr}.nx-billing-status{display:block}.nx-billing-status .primary{width:100%;margin-top:13px}}
+</style>
+
+<style id="nx-navigation-css">.nx-page{display:block}.nx-hidden{display:none!important}</style><style id="nx-calendar-css">.nx-calbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}.nx-calbar .group{display:flex;gap:6px;align-items:center}.nx-calbar button{background:#f5f7f9;color:#344054}.nx-calbar button.active{background:#111827;color:#fff}.nx-filter{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:8px;margin-bottom:12px}.nx-filter input,.nx-filter select{margin:0}.nx-daygrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.nx-day{min-height:110px;border:1px solid #e8ebef;border-radius:12px;padding:8px;background:#fff}.nx-day.muted{background:#fafbfc}.nx-day.today{border-color:#b7a16a;box-shadow:inset 0 0 0 1px #b7a16a}.nx-dayhead{font-size:11px;font-weight:850;margin-bottom:7px;display:flex;justify-content:space-between}.nx-appt{font-size:10px;padding:6px 7px;border-radius:8px;background:#f0f8f3;margin:4px 0;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nx-appt.pending{background:#fff7df}.nx-appt.cancelled{background:#fdebea;text-decoration:line-through}.nx-list-actions{display:flex;gap:5px;flex-wrap:wrap}.nx-list-actions button{font-size:10px;padding:6px 8px}.nx-detail{padding:14px;border:1px solid #e7eaee;border-radius:14px;background:#fafbfc;margin-top:10px}.nx-empty{padding:20px;text-align:center;color:#8a929d;border:1px dashed #dfe4e8;border-radius:12px}@media(max-width:700px){.nx-filter{grid-template-columns:1fr 1fr}.nx-daygrid{grid-template-columns:repeat(2,1fr)}.nx-day{min-height:90px}.nx-day:nth-child(n+7){display:none}.nx-calbar{align-items:stretch}.nx-calbar .group{width:100%}.nx-calbar .group button{flex:1}}</style>
+<style id="nx-crm-css">.nx-crm{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.nx-crm-toolbar{display:grid;grid-template-columns:1fr 180px auto;gap:8px;margin-bottom:12px}.nx-crm-toolbar input,.nx-crm-toolbar select{margin:0}.nx-customer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border:1px solid #e7eaee;border-radius:12px;margin-bottom:8px;background:#fff;cursor:pointer}.nx-customer:hover{border-color:#cfd5db}.nx-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eef7f1;font-weight:800}.nx-customer-main{display:flex;align-items:center;gap:10px;min-width:0}.nx-customer-name{font-weight:800}.nx-customer-meta{font-size:11px;color:#8a929d;margin-top:3px}.nx-customer-actions{display:flex;gap:5px}.nx-customer-actions button{padding:6px 8px;font-size:10px}.nx-profile{border:1px solid #e7eaee;border-radius:14px;padding:16px;background:#fafbfc;min-height:240px}.nx-profile h3{margin-top:0}.nx-profile-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #e8ebef;font-size:12px}.nx-profile-row:last-child{border-bottom:0}.nx-profile-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}.nx-crm-empty{padding:24px;text-align:center;color:#8a929d;border:1px dashed #dfe4e8;border-radius:12px}@media(max-width:760px){.nx-crm{grid-template-columns:1fr}.nx-crm-toolbar{grid-template-columns:1fr 1fr}.nx-crm-toolbar button{grid-column:1/-1}}</style><style id="nx-ai-css">.nx-ai{display:grid;grid-template-columns:280px 1fr;min-height:520px;border:1px solid #e7eaee;border-radius:16px;overflow:hidden;background:#fff}.nx-chat-list{background:#fafbfc;border-right:1px solid #e7eaee;padding:10px}.nx-chat-item{padding:11px;border-radius:10px;cursor:pointer;margin-bottom:5px}.nx-chat-item.active,.nx-chat-item:hover{background:#eef7f1}.nx-chat-name{font-weight:800;font-size:12px}.nx-chat-preview{font-size:10px;color:#8a929d;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-chat-main{display:flex;flex-direction:column}.nx-chat-head{padding:14px;border-bottom:1px solid #e7eaee;font-weight:800}.nx-chat-body{padding:14px;flex:1;overflow:auto;background:#fcfdfd}.nx-msg{max-width:78%;padding:10px 12px;border-radius:13px;margin:7px 0;font-size:12px;line-height:1.45}.nx-msg.customer{background:#f1f3f5}.nx-msg.ai{background:#eaf6ee;margin-left:auto}.nx-ai-compose{display:flex;gap:7px;padding:10px;border-top:1px solid #e7eaee}.nx-ai-compose input{margin:0;flex:1}.nx-ai-compose button{white-space:nowrap}.nx-ai-tools{display:flex;gap:6px;padding:10px;border-top:1px solid #f0f2f4;flex-wrap:wrap}.nx-ai-tools button{font-size:10px;padding:6px 8px}@media(max-width:720px){.nx-ai{grid-template-columns:1fr}.nx-chat-list{display:none}.nx-msg{max-width:90%}}</style><style id="nx-master-css">.nx-master{margin:14px 0 18px}.nx-master-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.nx-master-tools{display:flex;gap:7px;flex-wrap:wrap}.nx-master-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}.nx-ms{padding:14px;border:1px solid #e7eaee;border-radius:14px;background:#fff}.nx-ms .num{font-size:25px;font-weight:850;margin-top:4px}.nx-ms .sub{font-size:10px;color:#8a929d;margin-top:4px}.nx-master-filter{display:grid;grid-template-columns:1.5fr 150px 150px;gap:8px;margin-bottom:10px}.nx-master-filter input,.nx-master-filter select{margin:0}.nx-master-table{overflow:auto}.nx-master-table table{min-width:760px}.nx-master-table tr{cursor:pointer}.nx-master-table tr:hover{background:#fafbfc}.nx-master-detail{margin-top:10px;padding:14px;border:1px solid #e7eaee;border-radius:14px;background:#fafbfc;display:none}.nx-health{display:flex;gap:8px;align-items:center;font-size:11px}.nx-dot{width:8px;height:8px;border-radius:50%;background:#2e9b5b}.nx-dot.off{background:#c94b45}@media(max-width:800px){.nx-master-stats{grid-template-columns:repeat(2,1fr)}.nx-master-filter{grid-template-columns:1fr 1fr}.nx-master-filter input{grid-column:1/-1}}</style><style id="nx-team-css">.nx-team{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}.nx-team-create,.nx-team-manage{border:1px solid #e7eaee;border-radius:14px;padding:14px;background:#fafbfc}.nx-team-user{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px;border:1px solid #e7eaee;border-radius:11px;background:#fff;margin-bottom:7px}.nx-team-user.active{border-color:#b9ddc6}.nx-team-meta{font-size:11px;color:#8a929d;margin-top:3px}.nx-perms{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.nx-perm{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid #e5e8ec;border-radius:9px;background:#fff;font-size:11px}.nx-perm input{width:auto;margin:0}.nx-team-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.nx-role{font-size:10px;font-weight:800;padding:4px 8px;border-radius:99px;background:#eef1f4}@media(max-width:760px){.nx-team{grid-template-columns:1fr}.nx-perms{grid-template-columns:1fr}}</style><style id="nx-settings-css">.nx-settings{display:grid;grid-template-columns:210px 1fr;gap:14px}.nx-settings-nav{padding:8px;background:#fafbfc;border:1px solid #e7eaee;border-radius:14px}.nx-settings-nav button{width:100%;text-align:left;background:transparent;margin:2px 0}.nx-settings-nav button.active{background:#111827;color:#fff}.nx-settings-main{min-width:0}.nx-set-section{border:1px solid #e7eaee;border-radius:14px;padding:15px;background:#fff;margin-bottom:10px}.nx-set-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.nx-set-grid input,.nx-set-grid textarea{margin:0}.nx-set-label{font-size:10px;font-weight:800;letter-spacing:.08em;color:#8a929d;margin-bottom:6px}.nx-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.nx-day-btn{padding:8px 4px;font-size:10px;background:#f3f5f7}.nx-day-btn.selected{background:#111827;color:#fff}.nx-settings-note{font-size:11px;color:#667085;margin-top:6px}@media(max-width:700px){.nx-settings{grid-template-columns:1fr}.nx-set-grid{grid-template-columns:1fr}.nx-days{grid-template-columns:repeat(4,1fr)}}</style></head>
+<body><div id="authScreen" class="auth-shell">
+<div class="auth-glow auth-glow-one"></div><div class="auth-glow auth-glow-two"></div>
+<div class="auth-card">
+<div class="auth-brand"><div class="auth-mark">N</div><div><div class="auth-name">NEXORA</div><div class="auth-tag">BUSINESS OS</div></div></div>
+<div class="nexora-login">
+<div class="auth-copy">
+<div class="auth-eyebrow">NEXORA BUSINESS OS</div>
+<h1>İşletmenize hoş geldiniz.</h1>
+<div class="auth-subtitle">Randevularınızı, müşterilerinizi ve işletme operasyonunuzu tek ve sade bir panelden yönetin.</div>
+</div>
+<div class="auth-form-panel">
+<form id="authForm">
+<input id="authBusiness" placeholder="İşletme adı" autocomplete="organization" style="display:none">
+<label class="auth-label" for="authEmail">E-posta</label>
+<input id="authEmail" type="email" placeholder="ornek@isletme.com" autocomplete="email" required>
+<label class="auth-label" for="authPassword">Şifre</label>
+<input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" required>
+<div class="auth-row"><span></span><button id="forgotBtn" class="auth-link" type="button" onclick="const p=document.getElementById('forgotPanel');p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block'){const e=document.getElementById('forgotEmail');e.value=document.getElementById('authEmail').value||'';setTimeout(()=>e.focus(),50)}">Şifremi Unuttum</button></div>
+<div id="forgotPanel" style="display:none;margin:10px 0 12px;padding:12px;border:1px solid #e7eaee;border-radius:12px;background:#fff">
+  <div style="font-size:12px;font-weight:800;color:#344054;margin-bottom:6px">Şifre sıfırlama</div>
+  <div style="font-size:11px;color:#667085;margin-bottom:8px">Hesabınızdaki e-posta adresini girin. Sıfırlama bağlantısı e-postanıza gönderilecek.</div>
+  <input id="forgotEmail" type="email" placeholder="ornek@isletme.com" autocomplete="email">
+  <button id="forgotSendBtn" class="primary full" type="button" onclick="nxSendForgotPassword()">Sıfırlama Bağlantısı Gönder</button>
+  <div id="forgotStatus" style="font-size:11px;margin-top:8px"></div>
+</div>
+<button class="primary full" type="submit">Giriş Yap</button>
+</form>
+<div class="auth-divider"><span>veya</span></div>
+<button id="setupBtn" class="full auth-secondary" type="button" onclick="const b=document.getElementById('authBusiness');const f=document.getElementById('authForm');b.style.display='block';b.required=true;f.querySelector('button[type=submit]').textContent='14 Günlük Denemeyi Başlat';document.getElementById('setupBtn').style.display='none';f.dataset.mode='register';document.getElementById('authModeHint').innerHTML='Zaten hesabınız var mı? <button type=&quot;button&quot; id=&quot;loginLink&quot;>Giriş yap</button>';document.getElementById('loginLink').onclick=function(){location.reload()};document.getElementById('authError').textContent=''">Yeni İşletme Hesabı Oluştur</button>
+<div class="auth-toggle" id="authModeHint">Hesabınız yok mu? <button type="button" id="registerLink">Yeni işletme hesabı oluştur</button></div>
+<div class="auth-safe">Güvenli oturum · İşletme verileriniz yalnızca hesabınıza aittir</div>
+</div>
+</div><div class="nexora-corp"><span class="nexora-corp-line"></span><span>NEXORA</span><span class="nexora-corp-dot">•</span><span>İŞLETME YÖNETİM PLATFORMU</span><span class="nexora-corp-line"></span></div><div class="nexora-copyright">© 2026 NEXORA · Tüm hakları saklıdır</div>
+<div id="authError" style="color:#9b2420;margin-top:12px;font-size:14px"></div>
+</div></div><div id="app" class="wrap" style="display:none">
+<div id="masterPanel" class="master-panel nx-master" style="display:none"><div class="nx-master-top"><div><div class="label">NEXORA PLATFORM CONTROL</div><h2>👑 Yönetici Merkezi</h2><div class="muted">Platformun tamamını tek ekrandan izleme ve yönetim alanı</div></div><div class="nx-master-tools"><div id="nxMasterHealth" class="nx-health"><span class="nx-dot"></span> Sistem kontrol ediliyor...</div><button id="masterRefreshBtn" class="primary">↻ Yenile</button></div></div>
+<div class="nx-master-stats"><div class="nx-ms"><div class="label">İŞLETMELER</div><div class="num" id="masterBusinesses">0</div><div class="sub">Toplam işletme</div></div><div class="nx-ms"><div class="label">KULLANICILAR</div><div class="num" id="masterUsers">0</div><div class="sub">Kayıtlı kullanıcı</div></div><div class="nx-ms"><div class="label">RANDEVULAR</div><div class="num" id="masterAppointments">0</div><div class="sub">Toplam randevu</div></div><div class="nx-ms"><div class="label">MESAJLAR</div><div class="num" id="masterMessages">0</div><div class="sub">AI / müşteri mesajı</div></div><div class="nx-ms"><div class="label">AKTİF PLANLAR</div><div class="num" id="masterActivePlans">0</div><div class="sub">Pro + Trial</div></div></div>
+<div class="nx-master-filter"><input id="masterSearch" placeholder="🔎 İşletme adı ara"><select id="masterPlanFilter"><option value="">Tüm planlar</option><option value="trial">Trial</option><option value="pro">Pro</option></select><select id="masterStatusFilter"><option value="">Tüm durumlar</option><option value="active">Aktif</option><option value="suspended">Askıda</option></select></div>
+<div id="masterBusinessTable" class="master-table nx-master-table"></div><div id="nxMasterDetail" class="nx-master-detail"></div></div><div class="top"><div><div style="display:flex;align-items:center;gap:10px"><div class="dash-mark">N</div><div><h1>NEXORA</h1><div id="business" class="muted">İşletme bilgileri yükleniyor...</div></div></div><div><div class="muted" id="todayLabel"></div><button id="notifyBtn" class="install" style="margin-right:6px">🔔 Bildirimleri Aç</button><button id="installBtn" class="install" hidden>📲 Uygulamayı Yükle</button><button id="logoutBtn" class="install">Çıkış</button></div></div>
+</div><nav id="nexoraNav" class="nx-nav" aria-label="NEXORA menü">
+<button data-page="dashboard" class="active">⌂ Genel Bakış</button><button data-page="appointments">📅 Randevular</button><button data-page="customers">👥 Müşteriler</button><button data-page="messages">💬 Mesajlar & AI</button><button data-page="team">👤 Ekip</button><button data-page="settings">⚙️ Ayarlar</button><button data-page="subscription">◈ Abonelik</button><button data-page="usage">◔ Kullanım</button><button data-page="audit">🛡️ Denetim</button>
+</nav><div id="nxPageHead" class="nx-page-head"><h2>Genel Bakış</h2><span id="nxPageHint">İşletmenizin bugünkü özeti</span></div>
+<section class="nx-page" data-nx-page="dashboard"><section class="nx-dashboard-hero">
+  <div class="nx-hero-copy">
+    <div class="nx-hero-kicker">NEXORA BUSINESS OS</div>
+    <h3>İşletmenizin kontrolü,<br><span>tek ekranda.</span></h3>
+    <p>Randevularınızı, müşterilerinizi ve AI destekli iletişiminizi sade bir çalışma alanından yönetin.</p>
+    <div class="nx-hero-actions">
+      <button type="button" class="primary" onclick="nxSetPage('appointments')">＋ Randevu Oluştur</button>
+      <button type="button" class="nx-hero-secondary" onclick="nxSetPage('messages')">✦ AI Asistanı Aç</button>
+    </div>
+  </div>
+  <div class="nx-hero-side">
+    <div class="nx-live"><span></span> Sistem çevrimiçi</div>
+    <div class="nx-hero-date" id="nxHeroDate">Bugün</div>
+    <div class="nx-hero-note">Günün operasyon özeti hazır.</div>
+  </div>
+</section>
+  <div class="grid">
+    <div class="card"><div class="label">BUGÜNÜN RANDEVULARI</div><div class="stat" id="todayCount">0</div></div>
+    <div class="card"><div class="label">BEKLEYEN</div><div class="stat" id="pendingCount">0</div></div>
+    <div class="card"><div class="label">ONAYLANAN</div><div class="stat" id="confirmedCount">0</div></div>
+    <div class="card"><div class="label">MÜŞTERİLER</div><div class="stat" id="customerCount">0</div></div>
+    <div class="card"><div class="label">MESAJLAR</div><div class="stat" id="messageCount">0</div></div>
+    <div class="card"><div class="label">ABONELİK</div><div class="stat" id="dashboardPlan">TRIAL</div><div id="subscriptionInfo" class="muted" style="font-size:11px;margin-top:5px"></div><button id="proBtn" class="primary full" style="margin-top:10px">Pro'ya Geç</button></div>
+    <div class="card"><div class="label">KULLANIM</div><div id="usageInfo" class="muted" style="font-size:12px;margin-top:8px">Yükleniyor...</div></div>
+  </div>
+  <div class="layout nx-single">
+    <main><div class="card"><h2>📥 Son Müşteri Mesajları</h2><div id="messages" class="muted">Yükleniyor...</div></div></main>
+  </div>
+</section>
+
+<section class="nx-page" data-nx-page="appointments">
+  <div class="nx-appt-shell">
+    <div class="nx-appt-topline">
+      <div><div class="nx-hero-kicker">OPERASYON MERKEZİ</div><h3>Randevularınızı yönetin.</h3><p>Bugünün yoğunluğunu görün, bekleyen talepleri onaylayın ve yeni randevuyu saniyeler içinde oluşturun.</p></div>
+      <button type="button" class="primary nx-appt-add" id="nxNewAppt">＋ Yeni Randevu</button>
+    </div>
+    <div class="nx-appt-stats">
+      <div><span>BUGÜN</span><b id="nxApptTodayStat">—</b><small>randevu</small></div>
+      <div><span>BEKLEYEN</span><b id="nxApptPendingStat">—</b><small>onay bekliyor</small></div>
+      <div><span>ONAYLANAN</span><b id="nxApptConfirmedStat">—</b><small>planlandı</small></div>
+      <div><span>GÖRÜNÜM</span><b id="nxApptViewStat">LİSTE</b><small>aktif görünüm</small></div>
+    </div>
+    <div class="nx-appt-main">
+      <div class="card nx-appointment-workspace">
+        <div class="nx-appt-toolbar">
+          <div class="nx-calbar"><div class="group"><button type="button" id="nxPrevDay">‹</button><button type="button" id="nxToday" class="active">Bugün</button><button type="button" id="nxNextDay">›</button></div><div class="nx-appt-date-label" id="nxApptDateLabel">Bugün</div></div>
+          <div class="group nx-appt-views"><button type="button" id="nxListView" class="active">☷ Liste</button><button type="button" id="nxCalendarView">▦ Takvim</button></div>
+        </div>
+        <div class="nx-filter"><input id="nxApptSearch" placeholder="⌕  Müşteri veya telefon ara"><input id="nxApptDate" type="date"><select id="nxApptStatus"><option value="">Tüm durumlar</option><option value="pending">Bekleyen</option><option value="confirmed">Onaylanan</option><option value="cancelled">İptal</option></select></div>
+        <div id="nxAppointmentContent"><div id="todayAppointments" class="muted">Yükleniyor...</div></div>
+      </div>
+      <div class="card nx-appt-create" id="appointmentCreateCard">
+        <div class="nx-create-head"><div><span>HIZLI KAYIT</span><h3>Yeni randevu</h3><p>Müşteriniz için uygun zamanı hemen planlayın.</p></div><div class="nx-create-icon">＋</div></div>
+        <form id="appointmentForm">
+          <label>MÜŞTERİ ADI<input id="customer_name" placeholder="Örn. Ahmet Yılmaz" required></label>
+          <label>TELEFON<input id="phone" placeholder="05xx xxx xx xx" required></label>
+          <div class="nx-create-grid"><label>TARİH<input id="date" type="date" required></label><label>SAAT<input id="time" type="time" required></label></div>
+          <label>HİZMET<input id="service" placeholder="Örn. Saç + Sakal" required></label>
+          <button class="primary full">Randevuyu Kaydet</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="nx-page" data-nx-page="customers">
+  <div class="nx-crm-shell">
+    <div class="nx-crm-head">
+      <div><div class="nx-hero-kicker">CRM & MÜŞTERİLER</div><h3>Müşterilerinizi tanıyın.</h3><p>İletişim bilgileri, randevu geçmişi ve müşteri detayları tek çalışma alanında.</p></div>
+      <div class="nx-crm-badge">NEXORA CRM</div>
+    </div>
+    <div class="nx-crm-toolbar">
+      <div class="nx-crm-search"><span>⌕</span><input id="nxCustomerSearch" placeholder="Müşteri adı veya telefon ara"></div>
+      <button type="button" class="primary" id="nxCustomerRefresh">↻ Yenile</button>
+    </div>
+    <div id="customers" class="nx-crm-list muted">Müşteriler yükleniyor...</div>
+  </div>
+</section>
+
+<section class="nx-page" data-nx-page="messages">
+  <div class="nx-ai-shell">
+    <div class="nx-ai-head">
+      <div><div class="nx-hero-kicker">AI İLETİŞİM MERKEZİ</div><h3>NEXORA AI, müşterileriniz için hazır.</h3><p>Fiyat, hizmet ve randevu sorularına işletmenizin bilgileriyle yanıt verin.</p></div>
+      <div class="nx-ai-status"><span></span> AI HAZIR</div>
+    </div>
+    <div class="card nx-ai-workspace">
+      <div class="nx-ai">
+        <div class="nx-chat-list" id="nxChatList"><div class="nx-chat-item active"><div class="nx-chat-name">✦ NEXORA AI</div><div class="nx-chat-preview">Müşteri asistanı hazır</div><div class="nx-ai-channel">AI ASSISTANT</div></div></div>
+        <div class="nx-chat-main">
+          <div class="nx-chat-head" id="nxChatHead"><span>✦</span><div><b>NEXORA AI Asistan</b><small>İşletme bilgilerinize göre yanıtlıyor</small></div></div>
+          <div class="nx-chat-body" id="nxChatBody"><div class="nx-msg ai">Merhaba! Müşteri sorularını yanıtlamaya hazırım. Fiyat, hizmet ve randevu konularında yardımcı olabilirim.</div></div>
+          <div class="nx-ai-tools"><span>Hızlı işlemler</span><button type="button" onclick="nxQuick('Saç + Sakal fiyatı nedir?')">💰 Fiyat sor</button><button type="button" onclick="nxQuick('Bugün müsait randevu saatleri neler?')">📅 Müsaitlik</button><button type="button" onclick="nxQuick('Randevu oluşturmak istiyorum')">＋ Randevu</button></div>
+          <div class="nx-ai-compose"><input id="nxAiInput" placeholder="Müşteriniz adına bir soru yazın..."><button type="button" class="primary" id="nxAiSend">Gönder</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="nx-page" data-nx-page="team">
+  <div class="nx-team-shell">
+    <div class="nx-team-hero"><div><div class="nx-hero-kicker">EKİP & ERİŞİM YÖNETİMİ</div><h3>Ekibinizi güvenle yönetin.</h3><p>Çalışan hesapları ve erişim yetkileri tek bir kurumsal yönetim alanında.</p></div><div class="nx-team-security">⌁ GÜVENLİ YÖNETİM</div></div>
+    <div class="nx-team-layout">
+      <div class="card nx-team-create"><div class="nx-team-head"><div><span>YENİ HESAP</span><b>＋ Ekip üyesi ekle</b></div><div class="nx-role">STAFF</div></div><form id="teamForm"><label>ÇALIŞAN E-POSTASI<input id="teamEmail" type="email" placeholder="personel@isletme.com" required></label><label>GEÇİCİ ŞİFRE<input id="teamPassword" type="password" placeholder="En az 8 karakter" minlength="8" required autocomplete="new-password"></label><button class="primary full">Çalışan Hesabı Oluştur</button></form><div id="teamStatus" class="muted" style="margin:8px 0"></div><div class="nx-team-note">Çalışan erişimleri aşağıdaki yetki matrisiyle yönetilir.</div></div>
+      <div class="card nx-team-manage"><div class="nx-team-head"><div><span>EKİP</span><b>👥 Ekip üyeleri</b></div><button type="button" id="nxTeamRefresh">↻ Yenile</button></div><div id="teamList" class="muted">Yükleniyor...</div><div id="teamPerms"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="nx-page" data-nx-page="settings">
+  <div class="nx-settings-shell">
+    <div class="nx-settings-hero">
+      <div><div class="nx-hero-kicker">İŞLETME KONTROL MERKEZİ</div><h3>İşletmenizi tek merkezden yönetin.</h3><p>Marka bilgileri, çalışma düzeni, AI davranışı ve bağlantılarınız için sade ve güvenli yönetim alanı.</p></div>
+      <div class="nx-settings-badge">NEXORA CONTROL</div>
+    </div>
+    <form id="businessForm">
+      <div class="nx-settings nx-settings-premium">
+        <aside class="nx-settings-nav">
+          <div class="nx-settings-nav-title">YÖNETİM</div>
+          <button type="button" class="active" data-settab="profile"><span>01</span>🏢 İşletme</button>
+          <button type="button" data-settab="hours"><span>02</span>🕘 Çalışma düzeni</button>
+          <button type="button" data-settab="ai"><span>03</span>✦ AI davranışı</button>
+          <button type="button" data-settab="calendar"><span>04</span>📅 Google Calendar</button>
+          <button type="button" data-settab="whatsapp"><span>05</span>💬 WhatsApp</button>
+          <div class="nx-settings-nav-divider"></div>
+          <button type="button" data-settab="account"><span>06</span>🔐 Hesap & güvenlik</button>
+        </aside>
+        <div class="nx-settings-main">
+          <section class="nx-set-section" data-setpanel="profile"><div class="nx-set-kicker">MARKA & PROFİL</div><h3>İşletme profili</h3><p class="nx-set-desc">NEXORA'nın müşterilerinize gösterdiği temel işletme bilgilerini yönetin.</p><div class="nx-set-grid"><div><div class="nx-set-label">İŞLETME ADI</div><input id="cfgName" placeholder="İşletme adı" required></div><div><div class="nx-set-label">SEKTÖR</div><input id="cfgSector" placeholder="Berber, kuaför, klinik..." required></div><div><div class="nx-set-label">ADRES</div><input id="cfgAddress" placeholder="İşletme adresi"></div><div><div class="nx-set-label">HİZMETLER</div><textarea id="cfgServices" placeholder="Saç Kesimi=500 TL, Saç + Sakal=750 TL"></textarea></div></div></section>
+          <section class="nx-set-section" data-setpanel="hours" style="display:none"><div class="nx-set-kicker">OPERASYON</div><h3>Çalışma düzeni</h3><p class="nx-set-desc">Randevu motoru bu çalışma düzenini otomatik olarak dikkate alır.</p><div class="nx-set-grid"><div><div class="nx-set-label">ÇALIŞMA SAATLERİ</div><input id="cfgHours" placeholder="09:00-18:00" required></div><div><div class="nx-set-label">KAPALI GÜNLER</div><input id="cfgClosed" placeholder="Pazar"></div></div><div class="nx-settings-note">⏱ Randevu talepleri yalnızca açık gün ve saatler içinde planlanır.</div></section>
+          <section class="nx-set-section" data-setpanel="ai" style="display:none"><div class="nx-set-kicker">YAPAY ZEKA</div><h3>AI Asistan davranışı</h3><p class="nx-set-desc">Müşterilerinizle konuşurken NEXORA AI'nın kullanacağı iletişim tonunu belirleyin.</p><div class="nx-set-label">YANIT TONU</div><textarea id="cfgTone" placeholder="Samimi, kısa ve profesyonel"></textarea></section>
+          <section class="nx-set-section" data-setpanel="calendar" style="display:none"><div class="nx-set-kicker">ENTEGRASYON</div><h3>Google Calendar</h3><p class="nx-set-desc">Randevularınızı Google Calendar ile senkronize edin.</p><div id="calendarStatus" class="nx-connection-state muted">Bağlantı kontrol ediliyor...</div><div class="nx-settings-actions"><button type="button" class="install" id="calendarConnectBtn">Google Calendar Bağla</button><button type="button" class="install" id="calendarSyncBtn">Şimdi Senkronize Et</button><button type="button" class="cancel" id="calendarDisconnectBtn">Bağlantıyı Kaldır</button></div></section>
+          <section class="nx-set-section" data-setpanel="whatsapp" style="display:none"><div class="nx-set-kicker">ENTEGRASYON</div><h3>WhatsApp Business</h3><p class="nx-set-desc">WhatsApp Business bağlantınızı güvenli şekilde yönetin.</p><div class="nx-set-grid"><div><div class="nx-set-label">PHONE NUMBER ID</div><input id="cfgWhatsappPhoneId" placeholder="Phone Number ID"></div><div><div class="nx-set-label">ACCESS TOKEN</div><input id="cfgWhatsappToken" type="password" placeholder="Token değiştirmiyorsanız boş bırakın" autocomplete="off"></div></div><div id="cfgWhatsappStatus" class="nx-settings-note">Bağlantı kontrol ediliyor...</div></section>
+          <section class="nx-set-section" data-setpanel="account" style="display:none"><div class="nx-set-kicker">GÜVENLİK</div><h3>Hesap ve güvenlik</h3><p class="nx-set-desc">Hesap ve işletme verileriniz üzerinde geri döndürülemez işlemler için dikkatli olun.</p><div class="nx-danger-zone"><div><b>Hesabı kalıcı olarak sil</b><p>İşletmeniz, randevularınız, müşterileriniz, mesajlarınız ve bağlı verileriniz geri alınamaz şekilde silinir.</p></div><input id="deleteAccountPassword" type="password" placeholder="Mevcut şifreniz" autocomplete="current-password"><input id="deleteAccountConfirm" placeholder='Onay için "SİL" yazın' autocomplete="off"><button type="button" class="cancel" id="deleteAccountBtn">Hesabımı Kalıcı Olarak Sil</button><div id="deleteAccountStatus" class="muted" style="font-size:11px;margin-top:8px"></div></div></section>
+          <div class="nx-settings-footer"><button type="submit" class="primary" id="nxSaveBusiness">💾 Ayarları kaydet</button><div id="cfgStatus" class="muted"></div></div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="nx-page" data-nx-page="subscription"><div class="nx-billing-shell"><div class="nx-billing-hero"><div><div class="nx-hero-kicker">NEXORA PLANS</div><h3>İşletmeniz büyüdükçe,<br><span>platformunuz da büyüsün.</span></h3><p>Randevu, AI ve işletme operasyonlarınız için planınızı yönetin.</p></div><div class="nx-billing-badge">GÜVENLİ ABONELİK</div></div><div class="nx-plan-grid"><div class="card nx-plan-card"><div class="nx-plan-top"><span>BAŞLANGIÇ</span><b>TRIAL</b></div><h4>Ücretsiz</h4><p>İşletmenizi NEXORA ile tanımak için temel çalışma alanı.</p><ul><li>50 randevu / ay</li><li>200 AI mesajı / ay</li><li>Temel CRM ve operasyon</li></ul></div><div class="card nx-plan-card nx-plan-pro"><div class="nx-plan-top"><span>PROFESYONEL</span><b>PRO</b></div><h4>NEXORA Pro</h4><p>Daha yüksek kullanım limitleri ve büyüyen işletmeler için.</p><ul><li>1000 randevu / ay</li><li>5000 AI mesajı / ay</li><li>Gelişmiş işletme yönetimi</li></ul></div></div><div class="card nx-billing-status"><div><span class="nx-billing-kicker">MEVCUT PLAN</span><strong id="subscriptionCurrentPlan">TRIAL</strong><div id="nxSubscriptionInfo" class="muted">Abonelik bilgisi yükleniyor...</div></div><button id="nxProBtn" class="primary">Pro'ya Geç</button></div></div></section>
+<section class="nx-page" data-nx-page="usage"><div class="nx-usage-shell"><div class="nx-usage-hero"><div><div class="nx-hero-kicker">KULLANIM MERKEZİ</div><h3>Aylık kullanımınızı izleyin.</h3><p>Randevu ve AI mesaj limitlerinizi tek bakışta takip edin.</p></div><div class="nx-usage-badge">LIVE USAGE</div></div><div class="card nx-usage-card"><div class="nx-usage-head"><div><span>KOTA & TÜKETİM</span><h4>Bu ayki kullanım</h4></div><div class="nx-usage-dot">● AKTİF</div></div><div id="nxUsageInfo" class="nx-usage-info">Kullanım bilgisi yükleniyor...</div></div></div></section>
+<section class="nx-page" data-nx-page="audit"><div class="nx-audit-shell"><div class="nx-audit-hero"><div><div class="nx-hero-kicker">GÜVENLİK & DENETİM</div><h3>İşletmenizde ne olduğunu bilin.</h3><p>Önemli hesap ve işletme işlemlerinin güvenlik kayıtlarını inceleyin.</p></div><div class="nx-audit-badge">AUDIT LOG</div></div><div class="card nx-audit-card"><div class="nx-audit-head"><div><span>SON İŞLEMLER</span><h4>Denetim kayıtları</h4></div><div class="nx-audit-shield">🛡</div></div><div id="auditLogs" class="nx-audit-list muted">Kayıtlar yükleniyor...</div></div></div></section>
+</div><script>
+function localDateISO(){const d=new Date();const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,"0");const day=String(d.getDate()).padStart(2,"0");return y+"-"+m+"-"+day}
+const today=localDateISO();
+document.getElementById("todayLabel").textContent=new Date().toLocaleDateString("tr-TR",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
+function badge(status){const l={pending:"Bekliyor",confirmed:"Onaylandı",cancelled:"İptal",completed:"Tamamlandı"}[status]||status;return '<span class="badge '+escapeHtml(status)+'">'+escapeHtml(l)+"</span>";}
+async function setStatus(id,status){const r=await fetch("/api/appointments/status",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,status})});if(!r.ok){const x=await r.json().catch(()=>({}));alert(x.error||"Durum güncellenemedi.");return}if(status==="confirmed"&&"Notification" in window&&Notification.permission==="granted"){try{new Notification("Randevu onaylandı",{body:"Randevu durumu onaylandı."});}catch(e){}}loadDashboard();}
+function actionButtons(x){return x.status==="pending"?'<button class="approve" onclick="setStatus(\''+escapeHtml(x.id)+'\',\'confirmed\')">✓ Onayla</button><button class="cancel" onclick="setStatus(\''+escapeHtml(x.id)+'\',\'cancelled\')">✕ İptal</button>':"";}
+function appointmentTable(items){if(!items.length)return '<div class="muted">Randevu bulunmuyor.</div>';return '<div class="scroll"><table><tr><th>Müşteri</th><th>Saat</th><th>Hizmet</th><th>Durum</th><th>İşlem</th></tr>'+items.map(x=>'<tr><td>'+escapeHtml(x.customer_name)+'</td><td>'+escapeHtml(x.time)+'</td><td>'+escapeHtml(x.service)+'</td><td>'+badge(x.status)+'</td><td>'+actionButtons(x)+'</td></tr>').join("")+"</table></div>";}
+async function loadUsage(){
+ const r=await fetch("/api/usage"); if(!r.ok)return;
+ const u=await r.json(); const el=document.getElementById("usageInfo"); const el2=document.getElementById("nxUsageInfo"); if(!el&&!el2)return;
+ const a=u.used?.appointments||0, al=u.limits?.appointments||0, m=u.used?.ai_messages||0, ml=u.limits?.ai_messages||0;
+ const html="Randevu: <b>"+a+"/"+al+"</b><br>AI mesajı: <b>"+m+"/"+ml+"</b>"; if(el)el.innerHTML=html; if(el2)el2.innerHTML=html;
+}
+async function loadAudit(){
+ const r=await fetch("/api/audit"); if(!r.ok)return;
+ const rows=await r.json(), el=document.getElementById("auditLogs"); if(!el)return;
+ el.innerHTML=rows.length?rows.slice(0,20).map(x=>"<div style='padding:7px 0;border-bottom:1px solid #e5e7eb'><b>"+String(x.action||"").replace(/</g,"&lt;")+"</b><br><span class='muted'>"+new Date(x.created_at).toLocaleString("tr-TR")+"</span></div>").join(""):"Henüz denetim kaydı yok.";
+}
+async function loadSubscription(){
+ const r=await fetch("/api/subscription"); if(!r.ok)return;
+ const s=await r.json(); const plan=(s.plan||"trial").toUpperCase();
+ const planText=plan==="PRO"?"PRO":"TRIAL";
+ const infoText=plan==="PRO"?(s.subscription&&s.subscription.current_period_end?"Dönem sonu: "+new Date(s.subscription.current_period_end).toLocaleDateString("tr-TR"):"Aktif Pro abonelik"):(s.trial_ends_at?"Deneme sonu: "+new Date(s.trial_ends_at).toLocaleDateString("tr-TR"):"");
+ const p=document.getElementById("dashboardPlan"); if(p)p.textContent=planText;
+ const i=document.getElementById("subscriptionInfo"); if(i)i.textContent=infoText;
+ const i2=document.getElementById("nxSubscriptionInfo"); if(i2)i2.textContent=infoText;
+ const btn=document.getElementById("proBtn"); const btn2=document.getElementById("nxProBtn");
+ const action=async()=>{const endpoint=plan==="PRO"?"/api/billing/cancel":"/api/billing/start"; const rr=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}); const x=await rr.json().catch(()=>({})); if(rr.ok&&x.checkout_form_content){document.open();document.write('<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NEXORA Pro</title></head><body style="font-family:Arial,sans-serif;padding:20px"><div id="iyzico-checkout-form" class="responsive"></div>'+x.checkout_form_content+'</body></html>');document.close();return;} if(rr.ok&&x.checkout_url){window.location.href=x.checkout_url;return;} if(rr.ok){alert("İşlem tamamlandı.");loadSubscription();return;} alert(x.error||"İşlem gerçekleştirilemedi.");};
+ const label=plan==="PRO"?"Aboneliği İptal Et":"Pro'ya Geç";
+ if(btn){btn.textContent=label;btn.onclick=action;} if(btn2){btn2.textContent=label;btn2.onclick=action;}
+}
+function appointmentNotification(appointment,title="Yeni randevu"){
+  try{
+    if(!("Notification" in window)||Notification.permission!=="granted") return;
+    const body=(appointment.customer_name||"Müşteri")+" • "+(appointment.date||"")+" "+(appointment.time||"");
+    new Notification(title,{body});
+  }catch(e){}
+}
+async function enableNotifications(){
+  try{
+    if(!("Notification" in window)){alert("Bu tarayıcı bildirimleri desteklemiyor.");return;}
+    const permission=await Notification.requestPermission();
+    if(permission==="granted") alert("Bildirimler açıldı.");
+    else alert("Bildirim izni verilmedi.");
+  }catch(e){alert("Bildirimler açılamadı.");}
+}
+function checkAppointmentNotifications(items){
+  try{
+    const todayItems=Array.isArray(items)?items.filter(x=>x.date===today&&x.status!=="cancelled"):[];
+    localStorage.setItem("nexora-notification-count",String(todayItems.length));
+  }catch(e){}
+}
+function checkUpcomingReminders(items){
+  try{
+    const active=(Array.isArray(items)?items:[]).filter(x=>x.status!=="cancelled");
+    const key="nexora-seen-appointment-ids";
+    const stored=JSON.parse(localStorage.getItem(key)||"[]");
+    const known=new Set(Array.isArray(stored)?stored:[]);
+    if(known.size===0){active.forEach(x=>known.add(String(x.id)));localStorage.setItem(key,JSON.stringify(Array.from(known).slice(-500)));return;}
+    const fresh=active.filter(x=>!known.has(String(x.id)));
+    if(fresh.length && "Notification" in window && Notification.permission==="granted"){
+      fresh.forEach(x=>appointmentNotification(x,"Yeni randevu"));
+    }
+    active.forEach(x=>known.add(String(x.id)));
+    localStorage.setItem(key,JSON.stringify(Array.from(known).slice(-500)));
+  }catch(e){}
+}
+
+async function loadDashboard(){
+ const [ar,mr,cr,rr]=await Promise.all([fetch("/api/appointments"),fetch("/api/messages"),fetch("/api/customers"),fetch("/api/reports")]);
+ const items=ar.ok?await ar.json():[];
+ const messages=mr.ok?await mr.json():[];
+ const customers=cr.ok?await cr.json():[];
+ const report=rr.ok?await rr.json():null;
+ checkAppointmentNotifications(items);checkUpcomingReminders(items);
+ const todayItems=items.filter(x=>x.date===today),pending=items.filter(x=>x.status==="pending"),confirmed=items.filter(x=>x.status==="confirmed");
+ document.getElementById("todayCount").textContent=todayItems.length;
+ document.getElementById("pendingCount").textContent=pending.length;
+ document.getElementById("confirmedCount").textContent=confirmed.length;
+ document.getElementById("customerCount").textContent=customers.length;
+ document.getElementById("messageCount").textContent=messages.length;
+ document.getElementById("todayAppointments").innerHTML=appointmentTable(todayItems);
+ const pendingEl=document.getElementById("pendingAppointments"); if(pendingEl)pendingEl.innerHTML=appointmentTable(pending);
+ document.getElementById("customers").innerHTML=customers.length?`<div class="scroll"><table><tr><th>Müşteri</th><th>Telefon</th><th>Güncellenme</th></tr>${customers.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.phone)}</td><td>${escapeHtml(x.updated_at)}</td></tr>`).join("")}</table></div>`:'<div class="muted">Henüz müşteri yok.</div>';
+ document.getElementById("messages").innerHTML=messages.length?`<div class="scroll"><table><tr><th>Kanal</th><th>Müşteri</th><th>Mesaj</th><th>AI Niyeti</th><th>Zaman</th></tr>${messages.slice().reverse().map(x=>`<tr><td class="channel">${escapeHtml(x.channel)}</td><td class="${x.customer_name?"unread":""}">${escapeHtml(x.customer_name||"Bilinmiyor")}${x.phone?`<span class="pill">${escapeHtml(x.phone)}</span>`:""}</td><td class="message">${escapeHtml(x.message)}</td><td>${escapeHtml(x.intent||"other")}</td><td>${escapeHtml(x.created_at)}</td></tr>`).join("")}</table></div>`:'<div class="muted">Henüz müşteri mesajı yok.</div>';
+}
+
+fetch("/api/business").then(r=>r.json()).then(b=>{const el=document.getElementById("business");if(el)el.textContent=b.business_name+" • "+b.sector+" • "+b.working_hours;}).catch(()=>{});
+
+document.getElementById("notifyBtn").addEventListener("click",enableNotifications);
+document.getElementById("appointmentForm").addEventListener("submit",async e=>{e.preventDefault();const data={customer_name:document.getElementById("customer_name").value,phone:document.getElementById("phone").value,date:document.getElementById("date").value,time:document.getElementById("time").value,service:document.getElementById("service").value};const r=await fetch("/api/appointments",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});if(r.ok){const x=await r.json().catch(()=>null);e.target.reset();loadDashboard();if(x&&x.appointment)appointmentNotification(x.appointment,"Yeni randevu");alert("Randevu kaydedildi.");}else{const x=await r.json();alert(x.error||"Randevu kaydedilemedi.");}});
+let deferredPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").hidden=false;});document.getElementById("installBtn").addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById("installBtn").hidden=true;});if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+async function handleAuthTokens(){
+ const q=new URLSearchParams(location.search);
+ const reset=q.get("reset_token"), verify=q.get("verify_token");
+ if(verify){const r=await fetch("/api/auth/verify-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:verify})});const x=await r.json().catch(()=>({}));alert(x.message||x.error||"E-posta doğrulama sonucu alınamadı.");history.replaceState({},document.title,location.pathname);}
+ if(reset){const p=prompt("Yeni şifrenizi girin (en az 8 karakter):");if(p){const r=await fetch("/api/auth/reset-password",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:reset,password:p})});const x=await r.json().catch(()=>({}));alert(x.message||x.error||"Şifre sıfırlama sonucu alınamadı.");}history.replaceState({},document.title,location.pathname);}
+}
+async function loadMasterPanel(){
+ const panel=document.getElementById("masterPanel"); if(!panel)return;
+ const s=await fetch("/api/master/status"); if(!s.ok){panel.style.display="none";return;}
+ panel.style.display="block";
+ const [sr,br,hr]=await Promise.all([fetch("/api/master/stats"),fetch("/api/master/businesses"),fetch("/health")]);
+ if(hr.ok){const h=document.getElementById("nxMasterHealth");h.innerHTML='<span class="nx-dot"></span> Sistem çevrimiçi · '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});}
+ else {const h=document.getElementById("nxMasterHealth");h.innerHTML='<span class="nx-dot off"></span> Sağlık kontrolü başarısız';}
+ if(sr.ok){const x=await sr.json(); document.getElementById("masterBusinesses").textContent=x.businesses||0;document.getElementById("masterUsers").textContent=x.users||0;document.getElementById("masterAppointments").textContent=x.appointments||0;document.getElementById("masterMessages").textContent=x.messages||0;}
+ if(br.ok){window.nxMasterRows=await br.json();document.getElementById("masterActivePlans").textContent=window.nxMasterRows.filter(x=>String(x.status||'').toLowerCase()==='active').length;renderMasterRows();}
+}
+function renderMasterRows(){
+ const rows=window.nxMasterRows||[], q=(document.getElementById("masterSearch")?.value||'').toLowerCase().trim(), plan=document.getElementById("masterPlanFilter")?.value||'', st=document.getElementById("masterStatusFilter")?.value||'';
+ const a=rows.filter(x=>(!q||String(x.name||'').toLowerCase().includes(q))&&(!plan||String(x.plan||'').toLowerCase()===plan)&&(!st||String(x.status||'').toLowerCase()===st));
+ document.getElementById("masterBusinessTable").innerHTML=a.length?'<table><tr><th>İşletme</th><th>Plan</th><th>Durum</th><th>Kullanıcı</th><th>Randevu</th><th>Kayıt</th></tr>'+a.map(x=>'<tr onclick="nxMasterDetail('+x.id+')"><td><b>'+escapeHtml(x.name)+'</b><div class="muted">#'+x.id+'</div></td><td>'+escapeHtml(String(x.plan).toUpperCase())+'</td><td>'+escapeHtml(x.status)+'</td><td>'+x.users+'</td><td>'+x.appointments+'</td><td>'+escapeHtml(x.created_at||'')+'</td></tr>').join('')+'</table><div class="muted" style="font-size:10px;margin-top:7px">'+a.length+' işletme gösteriliyor</div>':'<div class="muted">Filtrelere uyan işletme bulunmuyor.</div>';
+}
+window.nxMasterDetail=function(id){const x=(window.nxMasterRows||[]).find(v=>String(v.id)===String(id));const d=document.getElementById("nxMasterDetail");if(!x||!d)return;d.style.display="block";d.innerHTML='<b>'+escapeHtml(x.name)+'</b><div class="muted" style="margin-top:5px">İşletme #'+x.id+' · '+escapeHtml(String(x.plan).toUpperCase())+' · '+escapeHtml(x.status)+'</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px"><div><b>'+x.users+'</b><div class="muted">Kullanıcı</div></div><div><b>'+x.appointments+'</b><div class="muted">Randevu</div></div><div><b>'+escapeHtml(x.created_at||'—')+'</b><div class="muted">Kayıt tarihi</div></div></div>'};
+document.getElementById("masterRefreshBtn")?.addEventListener("click",loadMasterPanel);
+document.getElementById("masterSearch")?.addEventListener("input",renderMasterRows);
+document.getElementById("masterPlanFilter")?.addEventListener("change",renderMasterRows);
+document.getElementById("masterStatusFilter")?.addEventListener("change",renderMasterRows);
+
+async function getAuthStatus(retries=5){
+  let last={authenticated:false};
+  for(let attempt=0;attempt<retries;attempt++){
+    try{
+      const r=await fetch("/api/auth/status",{credentials:"same-origin",cache:"no-store"});
+      if(r.ok){
+        const data=await r.json();
+        return data;
+      }
+      last={authenticated:false,temporaryError:true};
+    }catch(e){
+      last={authenticated:false,temporaryError:true};
+    }
+    if(attempt<retries-1) await new Promise(resolve=>setTimeout(resolve,1500));
+  }
+  return last;
+}
+async function nxSendForgotPassword(){
+ const email=(document.getElementById("forgotEmail")?.value||"").trim();
+ const st=document.getElementById("forgotStatus");
+ if(!st)return;
+ if(!email||!email.includes("@")){st.style.color="#9b2420";st.textContent="Geçerli bir e-posta adresi girin.";return;}
+ st.style.color="#667085";st.textContent="Gönderiliyor...";
+ try{
+  const r=await fetch("/api/auth/forgot-password",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});
+  const x=await r.json().catch(()=>({}));
+  st.style.color=r.ok?"#18733d":"#9b2420";
+  st.textContent=x.message||x.error||(r.ok?"İşlem tamamlandı.":"Gönderim başarısız.");
+ }catch(e){st.style.color="#9b2420";st.textContent="Sunucuya bağlanılamadı. Lütfen tekrar deneyin.";}
+}
+async function authInit(){
+  const status=await getAuthStatus();
+  const screen=document.getElementById("authScreen"), app=document.getElementById("app");
+  if(status.authenticated){screen.style.display="none";app.style.display="block";loadSubscription();loadUsage();loadAudit();loadDashboard();loadMasterPanel();return;}
+  const setup=await fetch("/api/auth/setup-available",{credentials:"same-origin"}).then(r=>r.json()).catch(()=>({available:false}));
+  const setupBtn=document.getElementById("setupBtn"), business=document.getElementById("authBusiness"), form=document.getElementById("authForm");
+  setupBtn.style.display="block";
+  document.getElementById("forgotBtn").onclick=()=>{const p=document.getElementById("forgotPanel");p.style.display=p.style.display==="none"?"block":"none";const e=document.getElementById("forgotEmail");if(p.style.display==="block"){e.value=document.getElementById("authEmail").value||"";setTimeout(()=>e.focus(),50);}};
+  document.getElementById("forgotSendBtn").onclick=async()=>{const email=document.getElementById("forgotEmail").value.trim();const st=document.getElementById("forgotStatus");if(!email||!email.includes("@")){st.style.color="#9b2420";st.textContent="Geçerli bir e-posta adresi girin.";return;}st.style.color="#667085";st.textContent="Gönderiliyor...";try{const r=await fetch("/api/auth/forgot-password",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email})});const x=await r.json().catch(()=>({}));st.style.color=r.ok?"#18733d":"#9b2420";st.textContent=x.message||x.error||"İşlem tamamlandı.";}catch(e){st.style.color="#9b2420";st.textContent="Sunucuya bağlanılamadı.";}};
+
+  function switchToRegister(){business.style.display="block";business.required=true;form.querySelector('button[type="submit"]').textContent="14 Günlük Denemeyi Başlat";setupBtn.style.display="none";form.dataset.mode="register";document.getElementById("authModeHint").innerHTML='Zaten hesabınız var mı? <button type="button" id="loginLink">Giriş yap</button>';document.getElementById("loginLink").onclick=switchToLogin;document.getElementById("authError").textContent="";} function switchToLogin(){business.style.display="none";business.required=false;form.querySelector('button[type="submit"]').textContent="Giriş Yap";setupBtn.style.display="block";form.dataset.mode="login";document.getElementById("authModeHint").innerHTML='Hesabınız yok mu? <button type="button" id="registerLink">Yeni işletme hesabı oluştur</button>';document.getElementById("registerLink").onclick=switchToRegister;document.getElementById("authError").textContent="";} setupBtn.onclick=switchToRegister; document.getElementById("registerLink").onclick=switchToRegister;
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();const mode=form.dataset.mode||"login";
+    const body={email:document.getElementById("authEmail").value,password:document.getElementById("authPassword").value};
+    if(mode==="register")body.business_name=business.value.trim()||"Demo İşletme";
+    let r;
+    try{
+      r=await fetch(mode==="register"?"/api/auth/register":"/api/auth/login",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    }catch(err){document.getElementById("authError").textContent="Sunucuya bağlanılamadı. Lütfen tekrar deneyin.";return;}
+    const x=await r.json().catch(()=>({}));
+    if(!r.ok){
+       if(r.status===401){document.getElementById("authError").textContent="Yanlış e-posta veya şifre. Lütfen kayıt olun.";}
+       else if(r.status===429){document.getElementById("authError").textContent=x.error||"Çok fazla giriş denemesi. Lütfen kısa süre sonra tekrar deneyin.";}
+       else {document.getElementById("authError").textContent=x.error||"İşlem başarısız.";}
+       return;
+     }
+    const check=await fetch("/api/auth/status",{credentials:"same-origin"}).then(v=>v.json()).catch(()=>({authenticated:false}));
+    if(!check.authenticated){document.getElementById("authError").textContent="Giriş başarılı ancak oturum oluşturulamadı. Lütfen tekrar deneyin.";return;}
+    document.getElementById("authError").textContent="";
+    document.getElementById("authScreen").style.display="none";
+    document.getElementById("app").style.display="block";
+    loadSubscription();loadUsage();loadAudit();loadDashboard();loadMasterPanel();loadBusinessSettings();loadTeam();
+  });
+}
+function nxSetPage(page,writeHash=true){
+ const allowed=["dashboard","appointments","customers","messages","team","settings","subscription","usage","audit"];
+ if(!allowed.includes(page))page="dashboard";
+ document.querySelectorAll(".nx-page").forEach(el=>el.classList.toggle("nx-hidden",el.dataset.nxPage!==page));
+ document.querySelectorAll("#nexoraNav [data-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.page===page));
+ const meta={dashboard:["Genel Bakış","İşletmenizin bugünkü özeti"],appointments:["Randevular","Randevularınızı görüntüleyin, yönetin ve yeni randevu oluşturun"],customers:["Müşteriler","Müşteri kayıtları ve iletişim bilgileri"],messages:["Mesajlar & AI","Müşteri mesajlarını ve NEXORA AI asistanını yönetin"],team:["Ekip","Çalışan hesapları ve yetkileri"],settings:["Ayarlar","İşletme, çalışma düzeni ve entegrasyon ayarları"],subscription:["Abonelik","Planınızı ve abonelik durumunuzu yönetin"],usage:["Kullanım","Aylık randevu ve AI kullanımınızı izleyin"],audit:["Denetim","İşletme işlemlerinin güvenlik kayıtları"]};
+ const m=meta[page]||meta.dashboard;document.getElementById("nxPageHead").querySelector("h2").textContent=m[0];document.getElementById("nxPageHint").textContent=m[1];
+ if(writeHash)history.replaceState(null,"","#"+page);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("#nexoraNav [data-page]").forEach(btn=>btn.addEventListener("click",()=>nxSetPage(btn.dataset.page)));
+window.addEventListener("hashchange",()=>nxSetPage(location.hash.slice(1)||"dashboard",false));
+nxSetPage(location.hash.slice(1)||"dashboard",false);
+
+const nxHeroDate=document.getElementById("nxHeroDate");if(nxHeroDate)nxHeroDate.textContent=new Date().toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"});handleAuthTokens().then(authInit);
+setInterval(()=>{if(document.getElementById("app").style.display!=="none")loadDashboard();},30000);
+const businessForm=document.getElementById("businessForm");
+async function loadCalendarStatus(){
+ const r=await fetch("/api/calendar/status"); if(!r.ok)return; const x=await r.json(); const el=document.getElementById("calendarStatus"); if(!el)return; el.textContent=x.connected?"🟢 "+(x.calendar_name||"Google Calendar")+" bağlı.":"⚪ Google Calendar bağlı değil.";
+}
+document.getElementById("calendarConnectBtn").addEventListener("click",async()=>{const r=await fetch("/api/calendar/connect");const x=await r.json().catch(()=>({}));if(r.ok&&x.url)location.href=x.url;else alert(x.error||"Google Calendar bağlantısı başlatılamadı.");});
+document.getElementById("calendarSyncBtn").addEventListener("click",async()=>{const r=await fetch("/api/calendar/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});const x=await r.json().catch(()=>({}));alert(r.ok?"Google Calendar senkronizasyonu tamamlandı.":(x.error||"Senkronizasyon başarısız."));loadCalendarStatus();});
+document.getElementById("calendarDisconnectBtn").addEventListener("click",async()=>{if(!confirm("Google Calendar bağlantısı kaldırılsın mı?"))return;const r=await fetch("/api/calendar/disconnect",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});const x=await r.json().catch(()=>({}));if(!r.ok)alert(x.error||"Bağlantı kaldırılamadı.");loadCalendarStatus();});
+loadCalendarStatus();
+async function loadBusinessSettings(){
+ const r=await fetch("/api/business"); if(!r.ok)return; const b=await r.json();
+ document.getElementById("cfgName").value=b.business_name||""; document.getElementById("cfgSector").value=b.sector||"";
+ document.getElementById("cfgHours").value=b.working_hours||""; document.getElementById("cfgAddress").value=b.address||"";
+ document.getElementById("cfgClosed").value=(b.closed_days||[]).join(", "); document.getElementById("cfgTone").value=b.tone||"";
+ document.getElementById("cfgWhatsappPhoneId").value=b.whatsapp_phone_number_id||"";
+ document.getElementById("cfgWhatsappToken").value="";
+ document.getElementById("cfgWhatsappStatus").textContent=b.whatsapp_connected?"🟢 WhatsApp bağlantısı aktif. Token değiştirmek istemiyorsanız boş bırakın.":"⚪ WhatsApp bağlı değil.";
+ document.getElementById("cfgServices").value=(b.services||[]).map(x=>x.name+"="+x.price).join(", ");
+}
+businessForm.addEventListener("submit",async e=>{e.preventDefault();
+ const services=document.getElementById("cfgServices").value.split(",").map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.lastIndexOf("=");return i>0?{name:x.slice(0,i).trim(),price:x.slice(i+1).trim()}:{name:x,price:""}});
+ const config={business_name:document.getElementById("cfgName").value.trim(),sector:document.getElementById("cfgSector").value.trim(),working_hours:document.getElementById("cfgHours").value.trim(),address:document.getElementById("cfgAddress").value.trim(),closed_days:document.getElementById("cfgClosed").value.split(",").map(x=>x.trim()).filter(Boolean),tone:document.getElementById("cfgTone").value.trim(),services};
+ const phoneId=document.getElementById("cfgWhatsappPhoneId").value.trim(); const token=document.getElementById("cfgWhatsappToken").value.trim();
+ const payload={business_name:config.business_name,config,whatsapp_phone_number_id:phoneId}; if(token)payload.whatsapp_access_token=token;
+ const r=await fetch("/api/business",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+ const saved=await r.json().catch(()=>({}));
+ document.getElementById("cfgStatus").textContent=r.ok?"✅ İşletme ayarları kaydedildi.":"❌ "+(saved.error||"Ayarlar kaydedilemedi."); if(r.ok){document.getElementById("business").textContent=config.business_name+" • "+config.sector+" • "+config.working_hours; document.getElementById("cfgWhatsappToken").value=""; document.getElementById("cfgWhatsappStatus").textContent=saved.whatsapp_connected?"🟢 WhatsApp bağlantısı aktif.":"⚪ WhatsApp bağlı değil.";}
+});
+loadBusinessSettings();
+async function loadTeam(){
+ const r=await fetch("/api/users"); if(!r.ok){document.getElementById("teamList").textContent="Ekip bilgisi alınamadı.";return}
+ const users=await r.json();
+ document.getElementById("teamList").innerHTML=users.map(u=>'<div style="padding:12px 0;border-bottom:1px solid #edf0f2"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><b>'+escapeHtml(u.email)+'</b><div class="muted" style="font-size:12px;margin-top:3px">Hesap aktif • '+escapeHtml(u.role)+'</div></div><div style="display:flex;gap:8px;align-items:center"><span class="pill">'+escapeHtml(u.role)+'</span>'+(u.role==="staff"?'<button class="install" onclick="editTeamPermissions('+u.id+',\''+escapeHtml(u.email)+'\')">Yetkiler</button>':"")+'</div></div></div>').join("");
+}
+loadTeam();
+document.getElementById("logoutBtn").addEventListener("click",async()=>{await fetch("/api/auth/logout",{method:"POST"});location.reload();});
+document.getElementById("teamForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const r=await fetch("/api/users/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:document.getElementById("teamEmail").value,password:document.getElementById("teamPassword").value,role:"staff"})});
+ const x=await r.json().catch(()=>({}));
+ document.getElementById("teamStatus").textContent=r.ok?"✅ Çalışan hesabı oluşturuldu.":"❌ "+(x.error||"Hesap oluşturulamadı.");
+ if(r.ok){e.target.reset();loadTeam();}
+});
+
+
+
+</script><script>async function editTeamPermissions(userId,email){
+ const names=[["appointments","Randevular"],["customers","Müşteriler"],["messages","Mesajlar"],["business_settings","İşletme ayarları"],["team","Ekip"],["reports","Raporlar"]];
+ const permissions={};
+ for(const [k,n] of names){ permissions[k]=window.confirm(email+" için "+n+" yetkisi verilsin mi?"); }
+ const r=await fetch("/api/users/permissions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user_id:userId,permissions})});
+ const x=await r.json().catch(()=>({}));
+ document.getElementById("teamStatus").textContent=r.ok?"✅ Yetkiler kaydedildi.":"❌ "+(x.error||"Yetki kaydedilemedi.");
+}
+</script></body></html>
