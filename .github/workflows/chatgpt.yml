@@ -1,0 +1,95 @@
+name: Gemini GitHub Code Review
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number to review"
+        required: true
+        type: string
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  code_review_job:
+    runs-on: ubuntu-latest
+    name: Gemini Code Review
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR diff
+        id: diff
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.number || inputs.pr_number }}
+        run: |
+          gh pr diff "$PR_NUMBER" --repo "${{ github.repository }}" > pr_diff.txt
+          echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_ENV"
+
+      - name: Review with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+
+          diff = open("pr_diff.txt", "r", encoding="utf-8").read()
+          if not diff.strip():
+              review = "Gemini Code Review: No code changes were found to review."
+          else:
+              prompt = """You are a senior software engineer performing a GitHub pull request code review.
+
+Review the following PR diff. Focus on:
+- bugs and logic errors
+- security problems
+- performance problems
+- breaking changes
+- missing or weak tests
+- maintainability issues
+
+Do not invent problems. If the code is sound, say so.
+Give concise, actionable feedback in Markdown.
+Start with a short summary, then list findings with severity (Critical/High/Medium/Low) and explain how to fix each finding.
+
+PR DIFF:
+""" + diff
+
+              payload = {
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {"maxOutputTokens": 2000}
+              }
+
+              req = urllib.request.Request(
+                  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+                  data=json.dumps(payload).encode("utf-8"),
+                  headers={
+                      "x-goog-api-key": os.environ["GEMINI_API_KEY"],
+                      "Content-Type": "application/json"
+                  },
+                  method="POST"
+              )
+
+              try:
+                  with urllib.request.urlopen(req, timeout=120) as r:
+                      data = json.load(r)
+                  review = data["candidates"][0]["content"]["parts"][0]["text"]
+              except Exception as e:
+                  print("Gemini API request failed:", e)
+                  raise
+
+          open("review.md", "w", encoding="utf-8").write(review)
+          PY
+
+      - name: Post review comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file review.md
