@@ -28,6 +28,20 @@ input{width:100%;padding:12px 13px;border:1px solid #e0e5ea;background:#fbfcfd;b
 /* NEXORA v2 — menu based workspace */
 .nx-nav{display:flex;gap:7px;align-items:center;overflow-x:auto;padding:7px;margin:0 0 18px;background:rgba(255,255,255,.86);border:1px solid #e7eaee;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.045);position:sticky;top:10px;z-index:50;scrollbar-width:none}.nx-nav::-webkit-scrollbar{display:none}.nx-nav button{flex:0 0 auto;background:transparent;color:#667085;border:1px solid transparent;padding:10px 13px;border-radius:11px;font-size:12px;font-weight:800;white-space:nowrap}.nx-nav button:hover{background:#f5f7f9;color:#111827}.nx-nav button.active{background:#111827;color:#fff;box-shadow:0 5px 14px rgba(15,23,42,.13)}.nx-page-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px;padding:4px 2px}.nx-page-head h2{font-size:20px;margin:0}.nx-page-head span{font-size:11px;color:#8a929d}.nx-hidden{display:none!important}.nx-single{grid-template-columns:1fr!important}.nx-mobile-menu{display:none}@media(max-width:800px){.nx-nav{position:sticky;top:6px}.nx-nav button{padding:9px 11px;font-size:11px}.nx-page-head{margin-top:4px}.nx-page-head h2{font-size:18px}}
 
+/* NEXORA command menu — click to open */
+.nx-menu-wrap{position:relative;margin:0 0 18px;z-index:80}
+.nx-menu-trigger{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:50px;padding:0 18px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:linear-gradient(135deg,#0b1220,#202b3d);color:#fff;box-shadow:0 14px 30px rgba(11,18,32,.15);font-size:13px;font-weight:850;letter-spacing:.01em}
+.nx-menu-trigger:hover{transform:translateY(-1px)}
+.nx-menu-trigger[aria-expanded="true"]{border-color:rgba(184,149,74,.55);box-shadow:0 16px 34px rgba(11,18,32,.2)}
+.nx-menu-trigger span{opacity:.95}
+.nx-menu-panel{display:none;position:absolute;left:0;right:0;top:58px;margin:0;padding:8px;flex-direction:column;align-items:stretch;gap:4px;background:rgba(255,255,255,.97);border:1px solid rgba(15,23,42,.1);border-radius:18px;box-shadow:0 24px 60px rgba(15,23,42,.16);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.nx-menu-panel.is-open{display:flex}
+.nx-menu-panel button{display:flex;align-items:center;justify-content:flex-start;gap:11px;width:100%;min-height:46px;padding:11px 13px;background:transparent!important;color:#344054!important;border:0;border-radius:12px;text-align:left;font-size:13px}
+.nx-menu-panel button:hover{background:#f5f7f9!important;color:#0b1220!important}
+.nx-menu-panel button.active{background:linear-gradient(135deg,#0b1220,#202b3d)!important;color:#fff!important;box-shadow:0 7px 16px rgba(11,18,32,.14)}
+.nx-menu-panel button:first-letter{font-size:16px}
+@media(max-width:800px){.nx-menu-wrap{margin-bottom:14px}.nx-menu-trigger{height:48px}.nx-menu-panel{top:55px}}
+
 /* NEXORA mobile touch hardening */
 @media(max-width:800px){
   button,.primary,.auth-link{min-height:44px;touch-action:manipulation}
@@ -226,9 +240,11 @@ linear-gradient(135deg,#0a111f 0%,#172235 58%,#202d40 100%);color:#fff;box-shado
 <div class="nx-master-stats"><div class="nx-ms"><div class="label">İŞLETMELER</div><div class="num" id="masterBusinesses">0</div><div class="sub">Toplam işletme</div></div><div class="nx-ms"><div class="label">KULLANICILAR</div><div class="num" id="masterUsers">0</div><div class="sub">Kayıtlı kullanıcı</div></div><div class="nx-ms"><div class="label">RANDEVULAR</div><div class="num" id="masterAppointments">0</div><div class="sub">Toplam randevu</div></div><div class="nx-ms"><div class="label">MESAJLAR</div><div class="num" id="masterMessages">0</div><div class="sub">AI / müşteri mesajı</div></div><div class="nx-ms"><div class="label">AKTİF PLANLAR</div><div class="num" id="masterActivePlans">0</div><div class="sub">Pro + Trial</div></div></div>
 <div class="nx-master-filter"><input id="masterSearch" placeholder="🔎 İşletme adı ara"><select id="masterPlanFilter"><option value="">Tüm planlar</option><option value="trial">Trial</option><option value="pro">Pro</option></select><select id="masterStatusFilter"><option value="">Tüm durumlar</option><option value="active">Aktif</option><option value="suspended">Askıda</option></select></div>
 <div id="masterBusinessTable" class="master-table nx-master-table"></div><div id="nxMasterDetail" class="nx-master-detail"></div></div><div class="top"><div><div style="display:flex;align-items:center;gap:10px"><div class="dash-mark">N</div><div><h1>NEXORA</h1><div id="business" class="muted">İşletme bilgileri yükleniyor...</div></div></div><div><div class="muted" id="todayLabel"></div><button id="notifyBtn" class="install" style="margin-right:6px">🔔 Bildirimleri Aç</button><button id="installBtn" class="install" hidden>📲 Uygulamayı Yükle</button><button id="logoutBtn" class="install">Çıkış</button></div></div>
-</div><nav id="nexoraNav" class="nx-nav" aria-label="NEXORA menü">
-<button data-page="dashboard" class="active">⌂ Genel Bakış</button><button data-page="appointments">📅 Randevular</button><button data-page="customers">👥 Müşteriler</button><button data-page="messages">💬 Mesajlar & AI</button><button data-page="team">👤 Ekip</button><button data-page="settings">⚙️ Ayarlar</button><button data-page="subscription">◈ Abonelik</button><button data-page="usage">◔ Kullanım</button><button data-page="audit">🛡️ Denetim</button>
-</nav><div id="nxPageHead" class="nx-page-head"><h2>Genel Bakış</h2><span id="nxPageHint">İşletmenizin bugünkü özeti</span></div>
+</div><div class="nx-menu-wrap">
+<button id="nxMenuTrigger" class="nx-menu-trigger" type="button" aria-expanded="false" aria-controls="nexoraNav">☰ <span>Menü</span></button>
+<nav id="nexoraNav" class="nx-nav nx-menu-panel" aria-label="NEXORA menü">
+<button data-page="dashboard" class="active">⌂ <span>Genel Bakış</span></button><button data-page="appointments">📅 <span>Randevular</span></button><button data-page="customers">👥 <span>Müşteriler</span></button><button data-page="messages">💬 <span>Mesajlar & AI</span></button><button data-page="team">👤 <span>Ekip</span></button><button data-page="settings">⚙️ <span>Ayarlar</span></button><button data-page="subscription">◈ <span>Abonelik</span></button><button data-page="usage">◔ <span>Kullanım</span></button><button data-page="audit">🛡️ <span>Denetim</span></button>
+</nav></div><div id="nxPageHead" class="nx-page-head"><h2>Genel Bakış</h2><span id="nxPageHint">İşletmenizin bugünkü özeti</span></div>
 <section class="nx-page" data-nx-page="dashboard"><section class="nx-dashboard-hero">
   <div class="nx-hero-copy">
     <div class="nx-hero-kicker">NEXORA BUSINESS OS</div>
@@ -568,7 +584,14 @@ function nxSetPage(page,writeHash=true){
  if(writeHash)history.replaceState(null,"","#"+page);
  window.scrollTo({top:0,behavior:"smooth"});
 }
-document.querySelectorAll("#nexoraNav [data-page]").forEach(btn=>btn.addEventListener("click",()=>nxSetPage(btn.dataset.page)));
+document.querySelectorAll("#nexoraNav [data-page]").forEach(btn=>btn.addEventListener("click",()=>{nxSetPage(btn.dataset.page);nxCloseMenu();}));
+const nxMenuTrigger=document.getElementById("nxMenuTrigger");
+const nxMenuPanel=document.getElementById("nexoraNav");
+function nxOpenMenu(){nxMenuPanel.classList.add("is-open");nxMenuTrigger.setAttribute("aria-expanded","true");}
+function nxCloseMenu(){nxMenuPanel.classList.remove("is-open");nxMenuTrigger.setAttribute("aria-expanded","false");}
+nxMenuTrigger.addEventListener("click",e=>{e.stopPropagation();nxMenuPanel.classList.contains("is-open")?nxCloseMenu():nxOpenMenu();});
+document.addEventListener("click",e=>{if(!e.target.closest(".nx-menu-wrap"))nxCloseMenu();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")nxCloseMenu();});
 window.addEventListener("hashchange",()=>nxSetPage(location.hash.slice(1)||"dashboard",false));
 nxSetPage(location.hash.slice(1)||"dashboard",false);
 
