@@ -17,3 +17,7 @@ services:
         fromDatabase:
           name: ai-isletme-asistani-db
           property: connectionString
+
+databases:
+  - name: ai-isletme-asistani-db
+    plan: free
